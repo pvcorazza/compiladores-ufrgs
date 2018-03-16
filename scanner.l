@@ -53,9 +53,8 @@ int insert_token(int token);
 "!" return yytext[0];
 "&" return yytext[0];
 "$" return yytext[0];
-"%" return yytext[0];
 "#" return yytext[0];
-"^" return yytext[0];
+
 
  /*Operadores Compostos*/
 
@@ -72,8 +71,8 @@ int insert_token(int token);
 
  /*Literais*/
 
-[+-]?[0-9]+ 			return insert_token(LIT_INTEGER);
-([+-]?[0-9]+)\.[0-9]+ 	return insert_token(LIT_REAL);
+[0-9]+ 			return insert_token(LIT_INTEGER);
+[0-9]+\.[0-9]+ 	return insert_token(LIT_REAL);
 '.' 					return insert_token(LIT_CHAR);
 \"[^\"]*\" 				return insert_token(LIT_STRING);
 
@@ -103,4 +102,8 @@ int yywrap() {
 
 int insert_token(int token){
 	return token;
+}
+
+int getLineNumber(void) {
+    return lineNumber;
 }
