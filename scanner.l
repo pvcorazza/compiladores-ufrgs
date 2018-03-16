@@ -4,14 +4,13 @@
 */
 
 %{
-#include "parser.h" //arquivo automaticamente gerado pelo bison
-#include "cc_misc.h"
-#include "cc_dict.h"
 
+#include "tokens.h"
+
+int running =1;
+int lineNumber = 1;
 int insert_token(int token);
 
-extern int line_count; //Variável definida em cc_misc.h para contagem de linhas
-extern comp_dict_t *symbol_table; 
 %}
 
 %x INSIDE
@@ -20,31 +19,18 @@ extern comp_dict_t *symbol_table;
 
  /* Palavras Reservadas */
 
-"int"       return TK_PR_INT;
-"float"     return TK_PR_FLOAT;
-"bool"      return TK_PR_BOOL;
-"char"      return TK_PR_CHAR;
-"string"    return TK_PR_STRING;
-"if"        return TK_PR_IF;
-"then"      return TK_PR_THEN;
-"else"      return TK_PR_ELSE;
-"while"     return TK_PR_WHILE;
-"do"        return TK_PR_DO;
-"input"     return TK_PR_INPUT;
-"output"    return TK_PR_OUTPUT;
-"return"    return TK_PR_RETURN;
-"const"     return TK_PR_CONST;
-"static"    return TK_PR_STATIC;
-"foreach"   return TK_PR_FOREACH;
-"for"       return TK_PR_FOR;
-"switch"    return TK_PR_SWITCH;
-"case"      return TK_PR_CASE;
-"break"     return TK_PR_BREAK;
-"continue"  return TK_PR_CONTINUE;
-"class"     return TK_PR_CLASS;
-"private"   return TK_PR_PRIVATE;
-"public"    return TK_PR_PUBLIC;
-"protected" return TK_PR_PROTECTED;
+"char"      return KW_CHAR;
+"int"       return KW_INT;
+"float"     return KW_FLOAT;
+"if"        return KW_IF;
+"then"      return KW_THEN;
+"else"      return KW_ELSE;
+"while"     return KW_WHILE;
+"for"       return KW_FOR;
+"read"      return KW_READ;
+"print"     return KW_PRINT;
+"return"    return KW_RETURN;
+
 
  /*Caracteres Especiais*/
 
@@ -73,27 +59,23 @@ extern comp_dict_t *symbol_table;
 
  /*Operadores Compostos*/
 
-"<=" return TK_OC_LE;
-">=" return TK_OC_GE;
-"==" return TK_OC_EQ;
-"!=" return TK_OC_NE;
-"&&" return TK_OC_AND;
-"||" return TK_OC_OR;
-"<<" return TK_OC_SL;
-">>" return TK_OC_SR;
+"<=" return OPERATOR_LE;
+">=" return OPERATOR_GE;
+"==" return OPERATOR_EQ;
+"!=" return OPERATOR_NE;
+"&&" return OPERATOR_AND;
+"||" return OPERATOR_OR;
 
  /*Identificadores*/
 
-([A-Za-z]|_)+([0-9]|([A-Za-z]|_))* return insert_token(TK_IDENTIFICADOR);
+([A-Za-z]|_)+([0-9]|([A-Za-z]|_))* return insert_token(TK_IDENTIFIER);
 
  /*Literais*/
 
-[+-]?[0-9]+ 			return insert_token(TK_LIT_INT);
-([+-]?[0-9]+)\.[0-9]+ 	return insert_token(TK_LIT_FLOAT);
-false					return insert_token(TK_LIT_FALSE);
-true					return insert_token(TK_LIT_TRUE);
-'.' 					return insert_token(TK_LIT_CHAR);
-\"[^\"]*\" 				return insert_token(TK_LIT_STRING);
+[+-]?[0-9]+ 			return insert_token(LIT_INTEGER);
+([+-]?[0-9]+)\.[0-9]+ 	return insert_token(LIT_REAL);
+'.' 					return insert_token(LIT_CHAR);
+\"[^\"]*\" 				return insert_token(LIT_STRING);
 
  /*Comentários, espaços, quebras de linha...*/
 
@@ -104,28 +86,21 @@ true					return insert_token(TK_LIT_TRUE);
 "*/"        BEGIN(INITIAL);
 [^*\n]+     {}
 "*"         {}
-\n          line_count++;
+\n          lineNumber++;
 }
 
 "//".*      {}
 \t|\r|" "   {}
-\n          line_count++;
-.           return TOKEN_ERRO;
+\n          lineNumber++;
+.           return TOKEN_ERROR;
 
 %%
 
+int yywrap() {
+    running = 0;
+    return 1;
+}
+
 int insert_token(int token){
-
-	char *lexema = (char*) malloc(sizeof(char) * (strlen (yytext)) + 1);
-	
-	strcpy(lexema,yytext);
-
-	//printf("lexema: %s, linha %d \n",lexema,line_count);
-
-	dict_put(symbol_table,lexema,line_count);	//insere o lexema na tabela hash
-	int linha = dict_get(symbol_table,lexema);
-	//printf("Incluiu lexema na tabela\n");
-
-	free(lexema);
 	return token;
 }
