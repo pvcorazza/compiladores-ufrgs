@@ -6,6 +6,8 @@
 %{
 
 #include "tokens.h"
+#include "symbol_table.h"
+
 
 int running =1;
 int lineNumber = 1;

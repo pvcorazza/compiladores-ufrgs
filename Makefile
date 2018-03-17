@@ -9,13 +9,19 @@
 #
 
 etapa1: lex.yy.o main.o
-	gcc -o etapa1 lex.yy.o main.o
+	gcc -o etapa1 symbol_table.o lex.yy.o main.o 
+
 main.o: main.c
 	gcc -c main.c
 lex.yy.o: lex.yy.c
 	gcc -c lex.yy.c
+
 lex.yy.c: scanner.l
-	flex --header-file=lex.yy.h scanner.l 
+	flex --header-file=lex.yy.h scanner.l
+
+symbol_table.o: symbol_table.c
+	gcc -c symbol_table.c
+auxiliar.o: auxiliar.c
+	gcc -c auxiliar.c
 clean:
 	rm *.o lex.yy.c etapa1
-
