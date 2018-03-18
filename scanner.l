@@ -11,7 +11,7 @@
 
 extern symbol_table_t *tabela;
 
-int running =1;
+int running = 1;
 int lineNumber = 1;
 int insert_token(int token);
 
@@ -75,8 +75,8 @@ int insert_token(int token);
 
  /*Literais*/
 
-[0-9]+ 			return insert_token(LIT_INTEGER);
-[0-9]+\.[0-9]+ 	return insert_token(LIT_REAL);
+[0-9]+ 			        return insert_token(LIT_INTEGER);
+[0-9]+\.[0-9]+ 	        return insert_token(LIT_REAL);
 '.' 					return insert_token(LIT_CHAR);
 \"[^\"]*\" 				return insert_token(LIT_STRING);
 
@@ -87,6 +87,7 @@ int insert_token(int token);
 }
 <INSIDE>{
 "*/"        BEGIN(INITIAL);
+
 [^*\n]+     {}
 "*"         {}
 \n          lineNumber++;
@@ -104,7 +105,7 @@ int yywrap() {
     return 1;
 }
 
-int insert_token(int token){
+int insert_token(int token) {
 
 	table_entry_t * item = NULL;
     char *lexema = (char*) malloc(sizeof(char) * (strlen (yytext)) + 12);

@@ -7,6 +7,9 @@
 extern FILE * yyin;
 extern char * yytext;
 extern int yylex();
+extern int isRunning();
+extern int getLineNumber();
+extern int initMe();
 extern symbol_table_t *tabela;
 
 int main(int argc, char ** argv) {
