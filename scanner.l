@@ -127,3 +127,7 @@ int insert_token(int token){
 int getLineNumber(void) {
     return lineNumber;
 }
+
+int isRunning(void) {
+    return running;
+}

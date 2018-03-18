@@ -4,14 +4,10 @@
 #include "tokens.h"
 #include "symbol_table.h"
 
-
-extern int running;
 extern FILE * yyin;
 extern char * yytext;
 extern int yylex();
 extern symbol_table_t *tabela;
-
-
 
 int main(int argc, char ** argv) {
 
@@ -27,7 +23,7 @@ int main(int argc, char ** argv) {
   }
   initMe();
 
-  while (running) {
+  while (isRunning()) {
     tok = yylex();
     switch (tok) {
       case KW_CHAR: printf("Line %d: Achei um char\n", getLineNumber());
