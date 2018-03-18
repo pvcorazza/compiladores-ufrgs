@@ -1,0 +1,36 @@
+char id_char;
+int id_x;
+float id_f;
+bool id_bool;
+string id_string;
+15;
+40.5;
+"isto eh uma string";
+'c';
+//caracteres especias:
+,
+;
+:
+(
+)
+[
+]
+/* comentario
+de muitas
+linhas
+agora vem outros caracteres
+especiais:*/
+{
+}
++
+-
+*
+/
+<
+>
+=
+!
+&
+$
+//syntax errors
+ˆ

@@ -3,6 +3,8 @@
 #include <string.h>
 #include "symbol_table.h"
 
+#define ERRO(MENSAGEM) { fprintf (stderr, "[cc_dict, %s] %s.\n", __FUNCTION__, MENSAGEM); abort(); }
+
 // one-at-a-time-hash, Jenkins, 2006
 int generate_hash(char *key, int limit)
 {
@@ -29,13 +31,13 @@ static table_entry_t *symbol_table_entry_new()
 
 
 static int table_entry_insert(table_entry_t * target,
-                            table_entry_t * new)
+                            table_entry_t * new_entry)
 {
     if (target == NULL)
         return 0;
     while (target->next != NULL)
         target = target->next;
-    target->next = new;
+    target->next = new_entry;
 
     return 1;
 }
@@ -53,7 +55,7 @@ static table_entry_t *table_entry_get(table_entry_t * first, char *key)
     return NULL;
 }
 
-static int dict_item_list_print(table_entry_t * entry)
+static int table_item_list_print(table_entry_t * entry)
 {
     int qtd = 0;
     while (entry != NULL) {
@@ -64,7 +66,7 @@ static int dict_item_list_print(table_entry_t * entry)
     return qtd;
 }
 
-void dict_debug_print(symbol_table_t * table)
+void debug_print_symbol_table(symbol_table_t * table)
 {
     int i, l;
     int qtd = 0;
@@ -87,21 +89,19 @@ symbol_table_t *symbol_table_new(void)
         return NULL;
     }
     table->size = DICT_SIZE;
-    entry->occupation = 0;
-    entry->qtd_parametros=0;
-    entry->data = malloc(sizeof(table_entry_t *) * entry->size);
-    if (!entry->data) {
-        free(entry);
-        ERRO("Cannot alocate memory for entry data");
+    table->data = malloc(sizeof(table_entry_t *) * table->size);
+    if (!table->data) {
+        free(table);
+        ERRO("Cannot alocate memory for table data");
         return NULL;
     }
-    entry->next = NULL;
-    entry->prev = NULL;
+    table->next = NULL;
+    table->prev = NULL;
 
-    int i, l = entry->size;
+    int i, l = table->size;
     for (i = 0; i < l; ++i)
-        entry->data[i] = NULL;
-    return entry;
+        table->data[i] = NULL;
+    return table;
 }
 
 /*
@@ -114,7 +114,7 @@ table_entry_t * add_symbol_table_entry(symbol_table_t * symbol_table, char *key,
         ERRO("At least one parameter is NULL");
     }
 
-    int hash = generate_hash(key, table->size);
+    int hash = generate_hash(key, symbol_table->size);
 
     table_entry_t *newitem = symbol_table_entry_new();
     newitem->key = strdup(key);
@@ -131,7 +131,7 @@ table_entry_t * add_symbol_table_entry(symbol_table_t * symbol_table, char *key,
         } else {
             //atualiza a linha em que foi achado o lexema que ja esta na tabela
             symbol_table->data[hash]->linha = linha;
-            symbol_table(newitem);
+            //symbol_table(newitem);
             return exists;
         }
     }

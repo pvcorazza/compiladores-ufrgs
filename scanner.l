@@ -7,7 +7,9 @@
 
 #include "tokens.h"
 #include "symbol_table.h"
+#include "auxiliar.h"
 
+extern symbol_table_t *tabela;
 
 int running =1;
 int lineNumber = 1;
@@ -103,6 +105,22 @@ int yywrap() {
 }
 
 int insert_token(int token){
+
+	table_entry_t * item = NULL;
+    char *lexema = (char*) malloc(sizeof(char) * (strlen (yytext)) + 12);
+
+    if(token == LIT_STRING || token == LIT_CHAR)
+    {
+        strcpy(lexema,&yytext[1]);
+        lexema[strlen(yytext)-2] = '\0';
+    }
+    else
+    {
+        strcpy(lexema,yytext);
+    }
+
+	item = add_symbol_table_entry(tabela,lexema,lineNumber);	//insere o lexema na tabela hash
+
 	return token;
 }
 

@@ -1,7 +1,6 @@
-#include <stdio.h>
-#include "symbol_table.h"
-#include "auxiliar.h"
 
+//tabela de simbolos
+symbol_table_t* tabela;
 
 /*
 	Essa função será chamada pela main testadora substituída pelo professor.
@@ -11,9 +10,4 @@
 	Você precisa implementar essa função mesmo que encontre outra forma de
 	inicialização que não dependa dela, pois ela será chamada pelos testes automatizados
 */
-void initMe(void){
-
-    printf("inicializando\n");
-    tabela = symbol_table_new();
-
-}
+void initMe(void);

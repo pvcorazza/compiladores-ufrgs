@@ -3,11 +3,17 @@
 #include <string.h>
 #include <stdbool.h>
 
+/*
+ * Constante: DICT_SIZE, representa o tamanho de uma tabela de símbolos
+ */
+#define DICT_SIZE 10240
+
 typedef struct table_entry {
 	char *key;
 	void *value;
 	int linha;    //numero da linha da ultima ocorrencia do lexema
-  	struct table_entry_t *next;  // ponteiro de overflow
+	int tipo; //tipo do token
+  	struct table_entry *next;  // ponteiro de overflow
 } table_entry_t;
 
 typedef struct symbol_table {
@@ -40,4 +46,4 @@ table_entry_t * add_symbol_table_entry(symbol_table_t * symbol_table, char *key,
  * Função: dict_debug_print, usada somente para visualizar os
  * ponteiros do dict.
  */
-void dict_debug_print(symbol_table_t * symbol_table);
+void debug_print_symbol_table(symbol_table_t *symbol_table);
