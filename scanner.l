@@ -76,7 +76,7 @@ int insert_token(int token);
 [0-9]+ 			        return insert_token(LIT_INTEGER);
 [0-9]+\.[0-9]+ 	        return insert_token(LIT_REAL);
 '.' 					return insert_token(LIT_CHAR);
-\"[^\"]*\" 				return insert_token(LIT_STRING);
+\"(\\.|[^\"])*\" 				return insert_token(LIT_STRING);
 
  /*Comentários, espaços, quebras de linha...*/
 
