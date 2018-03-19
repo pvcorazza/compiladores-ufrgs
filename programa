@@ -15,6 +15,9 @@ string id_string;
 )
 [
 ]
+<=
+==
+&&
 /* comentario
 de muitas
 linhas

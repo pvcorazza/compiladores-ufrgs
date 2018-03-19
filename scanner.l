@@ -13,10 +13,6 @@ int lineNumber = 1;
 void initMe(void);
 int insert_token(int token);
 
-//tabela de simbolos
-symbol_table_t* tabela;
-
-
 %}
 
 %x INSIDE
@@ -111,12 +107,8 @@ symbol_table_t* tabela;
 	inicialização que não dependa dela, pois ela será chamada pelos testes automatizados
 */
 void initMe(void){
-
-    printf("inicializando\n");
-    tabela = symbol_table_new();
-
+    generate_hash();
 }
-
 
 int yywrap() {
     running = 0;
@@ -124,22 +116,7 @@ int yywrap() {
 }
 
 int insert_token(int token) {
-
-	table_entry_t * item = NULL;
-    char *lexema = (char*) malloc(sizeof(char) * (strlen (yytext)) + 12);
-
-    if(token == LIT_STRING || token == LIT_CHAR)
-    {
-        strcpy(lexema,&yytext[1]);
-        lexema[strlen(yytext)-2] = '\0';
-    }
-    else
-    {
-        strcpy(lexema,yytext);
-    }
-
-	item = add_symbol_table_entry(tabela,lexema,lineNumber);	//insere o lexema na tabela hash
-
+    hash_insert(token, yytext);
 	return token;
 }
 
