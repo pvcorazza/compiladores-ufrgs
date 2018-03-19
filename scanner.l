@@ -7,13 +7,15 @@
 
 #include "tokens.h"
 #include "symbol_table.h"
-#include "auxiliar.h"
-
-extern symbol_table_t *tabela;
 
 int running = 1;
 int lineNumber = 1;
+void initMe(void);
 int insert_token(int token);
+
+//tabela de simbolos
+symbol_table_t* tabela;
+
 
 %}
 
@@ -99,6 +101,22 @@ int insert_token(int token);
 .           return TOKEN_ERROR;
 
 %%
+
+/*
+	Essa função será chamada pela main testadora substituída pelo professor.
+	Responsavel pelo código de inicialização necessário (por exemplo,
+	inicialização da tabela hash)
+
+	Você precisa implementar essa função mesmo que encontre outra forma de
+	inicialização que não dependa dela, pois ela será chamada pelos testes automatizados
+*/
+void initMe(void){
+
+    printf("inicializando\n");
+    tabela = symbol_table_new();
+
+}
+
 
 int yywrap() {
     running = 0;

@@ -8,15 +8,13 @@
 # Use make clean to remove old files before remaking everything
 #
 
-etapa1: lex.yy.o main.o symbol_table.o auxiliar.o
-	gcc -o etapa1 lex.yy.o main.o symbol_table.o auxiliar.o
+etapa1: lex.yy.o main.o symbol_table.o
+	gcc -o etapa1 lex.yy.o main.o symbol_table.o
 
 main.o: main.c
 	gcc -c main.c
 symbol_table.o: symbol_table.c
 	gcc -c symbol_table.c
-auxiliar.o: auxiliar.c
-	gcc -c auxiliar.c
 lex.yy.o: lex.yy.c
 	gcc -c lex.yy.c
 lex.yy.c: scanner.l
