@@ -120,7 +120,7 @@ int main(int argc, char **argv) {
                 printf("Line %d: Erro léxico [%s] \n", getLineNumber(), yytext);
                 break;
             default:
-                printf("(Não deveria chegar aqui) Line %d, Símbolo [%s]\n", getLineNumber(), yytext);
+                printf("Line %d, Símbolo [%s]\n", getLineNumber(), yytext);
 
         }
     }
