@@ -98,6 +98,7 @@ int main(int argc, char **argv) {
             case '!':
             case '&':
             case '$':
+            case '#':
                 printf("Line %d: Caractere Especial [%s]\n", getLineNumber(), yytext);
                 break;
             case TK_IDENTIFIER:
@@ -124,7 +125,7 @@ int main(int argc, char **argv) {
         }
     }
     printf("\n --- Debug symbol table: ---\n");
-    hashPrint();
+    hash_print();
     exit(0);
 
 }

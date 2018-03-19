@@ -107,7 +107,7 @@ int insert_token(int token);
 	inicialização que não dependa dela, pois ela será chamada pelos testes automatizados
 */
 void initMe(void){
-    generate_hash();
+    hash_generate();
 }
 
 int yywrap() {

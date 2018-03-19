@@ -4,7 +4,7 @@
 #include "symbol_table.h"
 #include "tokens.h"
 
-int generate_hash() {
+int hash_generate() {
     int i;
     for (i=0; i<SIZE; i++) {
         hash_table[i]=0;
@@ -34,7 +34,7 @@ hash_entry* hash_insert(int type, char* text) {
 
 }
 
-void hashPrint(void) {
+void hash_print(void) {
     int i;
     hash_entry *node;
     for (i=0; i<SIZE; i++) {

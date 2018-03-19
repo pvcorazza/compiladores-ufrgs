@@ -371,16 +371,16 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[99] =
     {   0,
-        0,    0,    0,    0,   53,   51,   49,   50,   28,   51,
-       31,   30,   29,   51,   15,   16,   23,   21,   12,   22,
-       24,   39,   14,   13,   25,   27,   26,   38,   17,   18,
-       38,   38,   38,   38,   38,   38,   38,   38,   19,   51,
-       20,   45,   47,   46,   35,    0,   42,   36,    0,   43,
-       48,    0,   39,   32,   34,   33,   38,   38,   38,   38,
-       38,   38,    4,   38,   38,   38,   38,   38,   37,   45,
-       44,   41,   48,   40,   38,   38,   38,    8,    2,   38,
-       38,   38,   38,   38,    1,    6,   38,   38,    9,   38,
-        5,   38,    3,   10,   38,    7,   11,    0
+        0,    0,    0,    0,   53,   51,   49,   50,   34,   51,
+       37,   36,   35,   51,   21,   22,   29,   27,   18,   28,
+       30,   38,   20,   19,   31,   33,   32,   42,   23,   24,
+       42,   42,   42,   42,   42,   42,   42,   42,   25,   51,
+       26,   45,   47,   46,   15,    0,   41,   16,    0,   43,
+       48,    0,   38,   12,   14,   13,   42,   42,   42,   42,
+       42,   42,    4,   42,   42,   42,   42,   42,   17,   45,
+       44,   40,   48,   39,   42,   42,   42,    8,    2,   42,
+       42,   42,   42,   42,    1,    6,   42,   42,    9,   42,
+        5,   42,    3,   10,   42,    7,   11,    0
 
     } ;
 
@@ -879,221 +879,221 @@ YY_RULE_SETUP
 #line 34 "scanner.l"
 return KW_RETURN;
 	YY_BREAK
-/*Caracteres Especiais*/
+/*Operadores Compostos*/
 case 12:
 YY_RULE_SETUP
-#line 39 "scanner.l"
-return yytext[0];
+#line 38 "scanner.l"
+return OPERATOR_LE;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 40 "scanner.l"
-return yytext[0];
+#line 39 "scanner.l"
+return OPERATOR_GE;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 41 "scanner.l"
-return yytext[0];
+#line 40 "scanner.l"
+return OPERATOR_EQ;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 42 "scanner.l"
-return yytext[0];
+#line 41 "scanner.l"
+return OPERATOR_NE;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 43 "scanner.l"
-return yytext[0];
+#line 42 "scanner.l"
+return OPERATOR_AND;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 44 "scanner.l"
-return yytext[0];
+#line 43 "scanner.l"
+return OPERATOR_OR;
 	YY_BREAK
+/*Caracteres Especiais*/
 case 18:
-YY_RULE_SETUP
-#line 45 "scanner.l"
-return yytext[0];
-	YY_BREAK
-case 19:
-YY_RULE_SETUP
-#line 46 "scanner.l"
-return yytext[0];
-	YY_BREAK
-case 20:
-YY_RULE_SETUP
-#line 47 "scanner.l"
-return yytext[0];
-	YY_BREAK
-case 21:
 YY_RULE_SETUP
 #line 48 "scanner.l"
 return yytext[0];
 	YY_BREAK
-case 22:
+case 19:
 YY_RULE_SETUP
 #line 49 "scanner.l"
 return yytext[0];
 	YY_BREAK
-case 23:
+case 20:
 YY_RULE_SETUP
 #line 50 "scanner.l"
 return yytext[0];
 	YY_BREAK
-case 24:
+case 21:
 YY_RULE_SETUP
 #line 51 "scanner.l"
 return yytext[0];
 	YY_BREAK
-case 25:
+case 22:
 YY_RULE_SETUP
 #line 52 "scanner.l"
 return yytext[0];
 	YY_BREAK
-case 26:
+case 23:
 YY_RULE_SETUP
 #line 53 "scanner.l"
 return yytext[0];
 	YY_BREAK
-case 27:
+case 24:
 YY_RULE_SETUP
 #line 54 "scanner.l"
 return yytext[0];
 	YY_BREAK
-case 28:
+case 25:
 YY_RULE_SETUP
 #line 55 "scanner.l"
 return yytext[0];
 	YY_BREAK
-case 29:
+case 26:
 YY_RULE_SETUP
 #line 56 "scanner.l"
 return yytext[0];
 	YY_BREAK
-case 30:
+case 27:
 YY_RULE_SETUP
 #line 57 "scanner.l"
 return yytext[0];
 	YY_BREAK
-case 31:
+case 28:
 YY_RULE_SETUP
 #line 58 "scanner.l"
 return yytext[0];
 	YY_BREAK
-/*Operadores Compostos*/
+case 29:
+YY_RULE_SETUP
+#line 59 "scanner.l"
+return yytext[0];
+	YY_BREAK
+case 30:
+YY_RULE_SETUP
+#line 60 "scanner.l"
+return yytext[0];
+	YY_BREAK
+case 31:
+YY_RULE_SETUP
+#line 61 "scanner.l"
+return yytext[0];
+	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 63 "scanner.l"
-return OPERATOR_LE;
+#line 62 "scanner.l"
+return yytext[0];
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 64 "scanner.l"
-return OPERATOR_GE;
+#line 63 "scanner.l"
+return yytext[0];
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 65 "scanner.l"
-return OPERATOR_EQ;
+#line 64 "scanner.l"
+return yytext[0];
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 66 "scanner.l"
-return OPERATOR_NE;
+#line 65 "scanner.l"
+return yytext[0];
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 67 "scanner.l"
-return OPERATOR_AND;
+#line 66 "scanner.l"
+return yytext[0];
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 68 "scanner.l"
-return OPERATOR_OR;
-	YY_BREAK
-/*Identificadores*/
-case 38:
-YY_RULE_SETUP
-#line 72 "scanner.l"
-return insert_token(TK_IDENTIFIER);
+#line 67 "scanner.l"
+return yytext[0];
 	YY_BREAK
 /*Literais*/
+case 38:
+YY_RULE_SETUP
+#line 75 "scanner.l"
+return insert_token(LIT_INTEGER);
+	YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 76 "scanner.l"
-return insert_token(LIT_INTEGER);
+return insert_token(LIT_REAL);
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 77 "scanner.l"
-return insert_token(LIT_REAL);
-	YY_BREAK
-case 41:
-YY_RULE_SETUP
-#line 78 "scanner.l"
 return insert_token(LIT_CHAR);
 	YY_BREAK
-case 42:
-/* rule 42 can match eol */
+case 41:
+/* rule 41 can match eol */
 YY_RULE_SETUP
-#line 79 "scanner.l"
+#line 78 "scanner.l"
 return insert_token(LIT_STRING);
+	YY_BREAK
+/*Identificadores*/
+case 42:
+YY_RULE_SETUP
+#line 83 "scanner.l"
+return insert_token(TK_IDENTIFIER);
 	YY_BREAK
 /*Comentários, espaços, quebras de linha...*/
 
 case 43:
 YY_RULE_SETUP
-#line 84 "scanner.l"
+#line 88 "scanner.l"
 BEGIN(INSIDE);
 	YY_BREAK
 
 
 case 44:
 YY_RULE_SETUP
-#line 87 "scanner.l"
+#line 91 "scanner.l"
 BEGIN(INITIAL);
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 89 "scanner.l"
+#line 93 "scanner.l"
 {}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 90 "scanner.l"
+#line 94 "scanner.l"
 {}
 	YY_BREAK
 case 47:
 /* rule 47 can match eol */
 YY_RULE_SETUP
-#line 91 "scanner.l"
+#line 95 "scanner.l"
 lineNumber++;
 	YY_BREAK
 
 case 48:
 YY_RULE_SETUP
-#line 94 "scanner.l"
+#line 98 "scanner.l"
 {}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 95 "scanner.l"
+#line 99 "scanner.l"
 {}
 	YY_BREAK
 case 50:
 /* rule 50 can match eol */
 YY_RULE_SETUP
-#line 96 "scanner.l"
+#line 100 "scanner.l"
 lineNumber++;
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 97 "scanner.l"
+#line 101 "scanner.l"
 return TOKEN_ERROR;
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 99 "scanner.l"
+#line 103 "scanner.l"
 ECHO;
 	YY_BREAK
 #line 1100 "lex.yy.c"
@@ -2098,7 +2098,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 99 "scanner.l"
+#line 103 "scanner.l"
 
 
 
@@ -2111,7 +2111,7 @@ void yyfree (void * ptr )
 	inicialização que não dependa dela, pois ela será chamada pelos testes automatizados
 */
 void initMe(void){
-    generate_hash();
+    hash_generate();
 }
 
 int yywrap() {

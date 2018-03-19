@@ -7,7 +7,7 @@ typedef struct table_entry {
 } hash_entry;
 
 hash_entry* hash_table[SIZE];
-int generate_hash(void);
+int hash_generate(void);
 int hash_address(char* text);
 hash_entry* hash_insert(int type, char* text);
-void hashPrint(void);
+void hash_print(void);
