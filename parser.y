@@ -60,15 +60,14 @@ decl_var_globais: TK_IDENTIFIER ':' tipos_var_globais '=' valor_inicializacao ';
 valor_inicializacao: LIT_INTEGER
 	| LIT_REAL
 	| LIT_CHAR
-	| LIT_REAL;
-
-inicializacao_vetor:
+	| LIT_REAL
+	;
 
 valor_literal:LIT_INTEGER
 	| LIT_REAL
 	| LIT_CHAR
-	| LIT_REAL
-	| LIT_STRING;
+	| LIT_STRING
+	;
 
 lista_valores_literais: valor_literal
     | valor_literal lista_valores_literais;
@@ -77,6 +76,50 @@ tipos_var_globais: KW_INT
 	| KW_FLOAT
 	| KW_CHAR;
 
+/*Bloco de comandos.*/
+bloco_comandos: '{' lista_comandos '}'
+	;
+
+lista_comandos: /*vazio*/
+	| comando lista_comandos
+	;
+
+comando:
+	| atribuicao ';'
+	| comando_condicional';'
+	| comando_for';'
+	| comando_while';'
+	| comando_read';'
+	| comando_print ';'
+	| comando_return ';'
+
+atribuicao:
+	|
+	;
+
+comando_condicional:
+	|
+	;
+
+comando_for:
+	|
+	;
+
+comando_while:
+	|
+	;
+
+comando_read:
+	|
+	;
+
+comando_print:
+	|
+	;
+
+comando_return:
+	|
+	;
 %%
 
 
