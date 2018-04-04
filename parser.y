@@ -34,7 +34,44 @@
 
 %%
 
-program : KW_WHILE
+program : decl
+
+	;
+
+decl: dec decl
+	|
+	;
+
+
+dec: decl_var_globais
+	|
+	;
+
+/* Regras de declaracoes de variaveis globais.*/
+decl_var_globais: TK_IDENTIFIER ':' tipos_var_globais '=' valor_inicializacao ';'
+	| TK_IDENTIFIER ':' tipos_var_globais'['LIT_INTEGER']' ';'
+	| TK_IDENTIFIER ':' tipos_var_globais'['LIT_INTEGER']' lista_valores_literais';'
+	;
+
+valor_inicializacao: LIT_INTEGER
+	| LIT_REAL
+	| LIT_CHAR
+	| LIT_REAL;
+
+inicializacao_vetor:
+
+valor_literal:LIT_INTEGER
+	| LIT_REAL
+	| LIT_CHAR
+	| LIT_REAL
+	| LIT_STRING;
+
+lista_valores_literais: valor_literal
+    | valor_literal lista_valores_literais;
+
+tipos_var_globais: KW_INT
+	| KW_FLOAT
+	| KW_CHAR;
 
 %%
 
