@@ -9,7 +9,7 @@
 #
 
 etapa1: y.tab.o lex.yy.o main.o symbol_table.o
-	gcc -o etapa1 lex.yy.o main.o symbol_table.o
+	gcc -o etapa1 y.tab.o lex.yy.o main.o symbol_table.o
 
 lex.yy.o: lex.yy.c
 	gcc -c lex.yy.c

@@ -36,3 +36,10 @@
 program : KW_WHILE
 
 %%
+
+
+int yyerror(int code){
+
+    fprintf(stderr, "ERRO linha = %d\n", getLineNumber());
+    exit(3);
+}
