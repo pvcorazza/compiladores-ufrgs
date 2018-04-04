@@ -38,18 +38,15 @@ int getLineNumber();
 
 %%
 
-program : decl
+program : corpo_programa
 
 	;
 
-decl: dec decl
-	|
+corpo_programa: decl_var_globais corpo_programa
+	| conj_funcoes corpo_programa
+	| /*vazio*/
 	;
 
-
-dec: decl_var_globais
-	|
-	;
 
 /* Regras de declaracoes de variaveis globais.*/
 decl_var_globais: TK_IDENTIFIER ':' tipos_var_globais '=' valor_inicializacao ';'
@@ -120,6 +117,24 @@ comando_print:
 comando_return:
 	|
 	;
+
+
+/*Regras de definicao de funcoes.*/
+lista: '(' /*vazio */ ')'
+	| '(' lista_parametros ')';
+
+/*Cabeçalho: tipo retorno da funcao, nome da funcao e uma lista de parametros*/
+cabecalho:'('tipos_var_globais')' TK_IDENTIFIER lista
+	;
+
+parametros:  TK_IDENTIFIER ':' tipos_var_globais
+		;
+
+
+conj_funcoes: cabecalho bloco_comandos
+	;
+
+lista_parametros: parametros | parametros ',' lista_parametros;
 %%
 
 
