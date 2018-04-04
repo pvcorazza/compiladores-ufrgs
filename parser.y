@@ -90,8 +90,8 @@ comando:
 	| comando_print ';'
 	| comando_return ';'
 
-atribuicao:
-	|
+atribuicao: TK_IDENTIFIER '=' expressao
+	| TK_IDENTIFIER'['expressao']' '=' expressao
 	;
 
 comando_condicional:
@@ -135,6 +135,53 @@ conj_funcoes: cabecalho bloco_comandos
 	;
 
 lista_parametros: parametros | parametros ',' lista_parametros;
+
+
+/* Expressoes aritmeticas e logicas*/
+
+function_call: TK_IDENTIFIER '(' function_call_args ')'
+	;
+
+function_call_args: /*vazio*/
+	| expressao function_call_more_args
+	;
+
+function_call_more_args: /*vazio*/ 
+	| ',' expressao function_call_more_args
+	;
+
+lit_char_string: LIT_CHAR
+	| LIT_STRING
+	;
+
+lit_numero: LIT_INTEGER
+	| LIT_REAL
+	;
+
+operandos: lit_char_string
+	| lit_numero
+	| TK_IDENTIFIER'['expressao']'	//vetor indexado expressao inteira
+	| TK_IDENTIFIER
+	| function_call
+	;
+
+expressao: operandos
+	| '('expressao')'
+	| expressao '+' expressao
+	| expressao '-' expressao
+	| expressao '*' expressao
+	| expressao '/' expressao
+	| expressao OPERATOR_LE expressao
+    | expressao OPERATOR_GE expressao
+    | expressao OPERATOR_EQ expressao
+  	| expressao OPERATOR_NE expressao
+    | expressao OPERATOR_AND expressao
+	| expressao OPERATOR_OR expressao
+	| expressao '>' expressao
+ 	| expressao '<' expressao
+	| '!' expressao
+	;
+
 %%
 
 
