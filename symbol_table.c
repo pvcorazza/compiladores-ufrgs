@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symbol_table.h"
-#include "tokens.h"
+#include "scanner.l"
 
 int hash_generate() {
     int i;
@@ -41,15 +41,15 @@ void hash_print(void) {
         for (node = hash_table[i]; node; node = node->next) {
             printf("Id: %d\t\t", i);
             switch (hash_table[i]->type) {
-                case TK_IDENTIFIER: printf("TK_IDENTIFIER\t");
+                case SYMBOL_IDENTIFIER: printf("TK_IDENTIFIER\t");
                     break;
-                case LIT_INTEGER: printf("LIT_INTEGER\t\t");
+                case SYMBOL_LIT_INT: printf("LIT_INTEGER\t\t");
                     break;
-                case LIT_REAL: printf("LIT_REAL\t\t");
+                case SYMBOL_LIT_REAL: printf("LIT_REAL\t\t");
                     break;
-                case LIT_CHAR: printf("LIT_CHAR\t\t");
+                case SYMBOL_LIT_CHAR: printf("LIT_CHAR\t\t");
                     break;
-                case LIT_STRING: printf("LIT_STRING\t\t");
+                case SYMBOL_LIT_STRING: printf("LIT_STRING\t\t");
                     break;
                 default: printf("ERRO\t");
             }

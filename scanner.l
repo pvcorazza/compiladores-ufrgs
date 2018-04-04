@@ -5,7 +5,14 @@
 
 %{
 
-#include "tokens.h"
+
+#define SYMBOL_LIT_INT 1
+#define SYMBOL_LIT_REAL 2
+#define SYMBOL_LIT_CHAR 3
+#define SYMBOL_LIT_STRING 4
+#define SYMBOL_IDENTIFIER 7
+
+#include "y.tab.h"
 #include "symbol_table.h"
 
 int running = 1;
@@ -76,7 +83,7 @@ int insert_token(int token);
 [0-9]+ 			        return insert_token(LIT_INTEGER);
 [0-9]+\.[0-9]+ 	        return insert_token(LIT_REAL);
 '.' 					return insert_token(LIT_CHAR);
-\"(\\.|[^\"])*\" 				return insert_token(LIT_STRING);
+\"(\\.|[^\"])*\" 		return insert_token(LIT_STRING);
 
  /*Comentários, espaços, quebras de linha...*/
 
@@ -116,6 +123,24 @@ int yywrap() {
 }
 
 int insert_token(int token) {
+
+    switch (token) {
+        case LIT_INTEGER :
+            hash_insert(SYMBOL_LIT_INT, yytext);
+            break;
+        case LIT_REAL :
+            hash_insert(SYMBOL_LIT_REAL, yytext);
+            break;
+        case LIT_CHAR :
+            hash_insert(SYMBOL_LIT_CHAR, yytext);
+            break;
+        case LIT_STRING :
+            hash_insert(SYMBOL_LIT_STRING, yytext);
+            break;
+        case TK_IDENTIFIER :
+            hash_insert(SYMBOL_IDENTIFIER, yytext);
+            break;
+    }
     hash_insert(token, yytext);
 	return token;
 }
