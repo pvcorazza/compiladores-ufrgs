@@ -40,16 +40,16 @@ void hash_print(void) {
         for (node = hash_table[i]; node; node = node->next) {
             printf("Id: %d\t\t", i);
             switch (hash_table[i]->type) {
-//                case SYMBOL_IDENTIFIER: printf("TK_IDENTIFIER\t");
-//                    break;
-//                case SYMBOL_LIT_INT: printf("LIT_INTEGER\t\t");
-//                    break;
-//                case SYMBOL_LIT_REAL: printf("LIT_REAL\t\t");
-//                    break;
-//                case SYMBOL_LIT_CHAR: printf("LIT_CHAR\t\t");
-//                    break;
-//                case SYMBOL_LIT_STRING: printf("LIT_STRING\t\t");
-//                    break;
+                case SYMBOL_IDENTIFIER: printf("TK_IDENTIFIER\t");
+                    break;
+                case SYMBOL_LIT_INT: printf("LIT_INTEGER\t\t");
+                    break;
+                case SYMBOL_LIT_REAL: printf("LIT_REAL\t\t");
+                    break;
+                case SYMBOL_LIT_CHAR: printf("LIT_CHAR\t\t");
+                    break;
+                case SYMBOL_LIT_STRING: printf("LIT_STRING\t\t");
+                    break;
                 default: printf("ERRO\t");
             }
 

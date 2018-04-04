@@ -1,5 +1,11 @@
 #define SIZE 997
 
+#define SYMBOL_LIT_INT 1
+#define SYMBOL_LIT_REAL 2
+#define SYMBOL_LIT_CHAR 3
+#define SYMBOL_LIT_STRING 4
+#define SYMBOL_IDENTIFIER 7
+
 typedef struct table_entry {
 	char *text;
 	int type;
