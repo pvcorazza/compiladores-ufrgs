@@ -5,6 +5,7 @@
 
 %}
 
+%define parse.error verbose
 %token KW_CHAR
 %token KW_INT
 %token KW_FLOAT
@@ -38,8 +39,8 @@ program : KW_WHILE
 %%
 
 
-int yyerror(int code){
-
-    fprintf(stderr, "ERRO linha = %d\n", getLineNumber());
+void yyerror (char const *s)
+{
+    fprintf(stderr,"Line %d: %s\n",getLineNumber(),s);
     exit(3);
 }
