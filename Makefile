@@ -8,15 +8,19 @@
 # Use make clean to remove old files before remaking everything
 #
 
-etapa1: lex.yy.o main.o symbol_table.o
+etapa1: y.tab.o lex.yy.o main.o symbol_table.o
 	gcc -o etapa1 lex.yy.o main.o symbol_table.o
 
+lex.yy.o: lex.yy.c
+	gcc -c lex.yy.c
+y.tab.o: y.tab.c
+	gcc -c y.tab.c
 main.o: main.c
 	gcc -c main.c
 symbol_table.o: symbol_table.c
 	gcc -c symbol_table.c
-lex.yy.o: lex.yy.c
-	gcc -c lex.yy.c
+y.tab.c: parser.y
+	yacc -v -d parser.y
 lex.yy.c: scanner.l
 	flex --header-file=lex.yy.h scanner.l
 clean:
