@@ -2,10 +2,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+int yylex();
+void yyerror(const char *s);
+int getLineNumber();
 
 %}
 
 %define parse.error verbose
+
 %token KW_CHAR
 %token KW_INT
 %token KW_FLOAT
