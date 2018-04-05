@@ -49,13 +49,13 @@ corpo_programa: decl_var_globais corpo_programa
 
 
 /* Regras de declaracoes de variaveis globais.*/
-decl_var_globais: TK_IDENTIFIER ':' tipos_var_globais '=' valor_inicializacao ';'
-	| TK_IDENTIFIER ':' tipos_var_globais'['LIT_INTEGER']' ';'
-	| TK_IDENTIFIER ':' tipos_var_globais'['LIT_INTEGER']' lista_valores_literais';'
+decl_var_globais: tipos_var_globais TK_IDENTIFIER '=' valor_inicializacao ';'
+	| tipos_var_globais TK_IDENTIFIER'['LIT_INTEGER']' ';'
+	| tipos_var_globais TK_IDENTIFIER'['LIT_INTEGER']' ':' lista_valores_inicializacao';'
+	| tipos_var_globais '#'TK_IDENTIFIER '=' valor_inicializacao ';'
 	;
 
 valor_inicializacao: LIT_INTEGER
-	| LIT_REAL
 	| LIT_CHAR
 	| LIT_REAL
 	;
@@ -66,8 +66,8 @@ valor_literal:LIT_INTEGER
 	| LIT_STRING
 	;
 
-lista_valores_literais: valor_literal
-    | valor_literal lista_valores_literais;
+lista_valores_inicializacao: valor_inicializacao
+    | valor_inicializacao lista_valores_inicializacao;
 
 tipos_var_globais: KW_INT
 	| KW_FLOAT
@@ -146,7 +146,7 @@ function_call_args: /*vazio*/
 	| expressao function_call_more_args
 	;
 
-function_call_more_args: /*vazio*/ 
+function_call_more_args: /*vazio*/
 	| ',' expressao function_call_more_args
 	;
 
