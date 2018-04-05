@@ -106,9 +106,7 @@ comando_while:
 	|
 	;
 
-comando_read:
-	|
-	;
+comando_read: KW_READ TK_IDENTIFIER;
 
 comando_print: KW_PRINT lista_elementos_print
 	|
