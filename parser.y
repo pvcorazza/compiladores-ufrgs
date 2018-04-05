@@ -110,24 +110,32 @@ comando_read:
 	|
 	;
 
-comando_print:
+comando_print: KW_PRINT lista_elementos_print
 	|
 	;
 
-comando_return:
+comando_return: KW_RETURN expressao
 	|
 	;
 
+lista_elementos_print: elementos_print
+	| lista_elementos_print elementos_print
+	;
+
+elementos_print:  LIT_STRING
+	| expressao
+	;
 
 /*Regras de definicao de funcoes.*/
 lista: '(' /*vazio */ ')'
 	| '(' lista_parametros ')';
 
 /*Cabeçalho: tipo retorno da funcao, nome da funcao e uma lista de parametros*/
-cabecalho:'('tipos_var_globais')' TK_IDENTIFIER lista
+cabecalho: tipos_var_globais TK_IDENTIFIER lista
 	;
 
-parametros:  TK_IDENTIFIER ':' tipos_var_globais
+
+parametros:  tipos_var_globais TK_IDENTIFIER
 		;
 
 
