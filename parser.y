@@ -21,6 +21,7 @@ int getLineNumber();
 %token KW_READ
 %token KW_RETURN
 %token KW_PRINT
+%token KW_TO
 
 %token OPERATOR_LE
 %token OPERATOR_GE
@@ -79,18 +80,13 @@ lista_valores_inicializacao: valor_inicializacao
 
 /*Regras de definicao de funcoes.*/
 
-conj_funcoes: cabecalho bloco_comandos
+conj_funcoes: tipos_var_globais TK_IDENTIFIER '(' lista_parametros ')' bloco_comandos
 	;
 
 /* será que função pode ser do tipo string? */
 
-cabecalho: tipos_var_globais TK_IDENTIFIER lista
-	;
-
-lista: '(' /*vazio */ ')'
-	| '(' lista_parametros ')';
-
-lista_parametros: parametros
+lista_parametros:
+	| parametros
 	| parametros ',' lista_parametros;
 
 parametros:  tipos_var_globais TK_IDENTIFIER
@@ -102,14 +98,19 @@ parametros:  tipos_var_globais TK_IDENTIFIER
 bloco_comandos: '{' lista_comandos '}'
 ;
 
-/* lembrar de corrigir ponto e virgula */
 lista_comandos: /*vazio*/
-	| comando ';' lista_comandos
+	| comando ultimo_comando
 	;
 
-comando: bloco_comandos
+ultimo_comando : ';' comando ultimo_comando
+|
+;
+
+
+comando:
+	| bloco_comandos
 	| atribuicao
-	/*controle fluxo*/
+	| control
 	| comando_read
 	| comando_print
 	| comando_return
@@ -135,7 +136,7 @@ expressao: TK_IDENTIFIER
 	| TK_IDENTIFIER '(' function_call_args ')'
 	| TK_IDENTIFIER '[' expressao ']'
 	| literal
-	'(' expressao ')'
+	| '(' expressao ')'
 	| expressao '+' expressao
 	| expressao '-' expressao
 	| expressao '*' expressao
@@ -149,6 +150,8 @@ expressao: TK_IDENTIFIER
 	| expressao '>' expressao
 	| expressao '<' expressao
 	| '!' expressao
+	| '&' TK_IDENTIFIER
+	| '#' TK_IDENTIFIER
 	;
 
 literal : LIT_CHAR
@@ -163,6 +166,14 @@ function_call_args: /*vazio*/
 
 function_call_more_args: /*vazio*/
 	| ',' expressao function_call_more_args
+	;
+
+/* Comandos de controle de fluxo */
+
+control: KW_IF '(' expressao ')' KW_THEN comando
+	| KW_IF '(' expressao ')' KW_THEN comando KW_ELSE comando
+	| KW_WHILE '(' expressao ')' comando
+	| KW_FOR '(' TK_IDENTIFIER '=' expressao KW_TO expressao ')' comando
 	;
 
 %%

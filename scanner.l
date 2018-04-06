@@ -32,6 +32,7 @@
 "read"      return KW_READ;
 "print"     return KW_PRINT;
 "return"    return KW_RETURN;
+"to"        return KW_TO;
 
 
  /*Caracteres Especiais*/
