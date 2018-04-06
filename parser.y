@@ -53,7 +53,6 @@ corpo_programa: decl_var_globais corpo_programa
 	| /*vazio*/
 	;
 
-
 /* Regras de declaracoes de variaveis globais.*/
 
 decl_var_globais: tipos_var_globais TK_IDENTIFIER '=' valor_inicializacao ';'
@@ -76,8 +75,6 @@ lista_valores_inicializacao: valor_inicializacao
 	| valor_inicializacao lista_valores_inicializacao
 	;
 
-
-
 /*Regras de definicao de funcoes.*/
 
 conj_funcoes: tipos_var_globais TK_IDENTIFIER '(' lista_parametros ')' bloco_comandos
@@ -92,7 +89,6 @@ lista_parametros:
 parametros:  tipos_var_globais TK_IDENTIFIER
 ;
 
-
 /*Bloco de comandos.*/
 
 bloco_comandos: '{' lista_comandos '}'
@@ -105,7 +101,6 @@ lista_comandos: /*vazio*/
 ultimo_comando : ';' comando ultimo_comando
 |
 ;
-
 
 comando:
 	| bloco_comandos
@@ -130,7 +125,7 @@ lista_elementos_print: expressao
 
 comando_return: KW_RETURN expressao	;
 
-/* Expressoes aritmeticas e logicas*/
+/* Expressoes aritméticas e logicas */
 
 expressao: TK_IDENTIFIER
 	| TK_IDENTIFIER '(' function_call_args ')'
@@ -177,7 +172,6 @@ control: KW_IF '(' expressao ')' KW_THEN comando
 	;
 
 %%
-
 
 void yyerror (char const *s)
 {

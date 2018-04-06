@@ -70,14 +70,14 @@
 
  /*Identificadores*/
 
-([A-Za-z]|_)+([0-9]|([A-Za-z]|_))* return insert_token(TK_IDENTIFIER);
+([A-Za-z]|_)+([0-9]|([A-Za-z]|_))* { hash_insert(SYMBOL_IDENTIFIER, yytext); return TK_IDENTIFIER; }
 
  /*Literais*/
 
-[0-9]+ 			        return insert_token(LIT_INTEGER);
-[0-9]+\.[0-9]+ 	        return insert_token(LIT_REAL);
-'.' 					return insert_token(LIT_CHAR);
-\"(\\.|[^\"])*\" 		return insert_token(LIT_STRING);
+[0-9]+ 			        { hash_insert(SYMBOL_LIT_INT, yytext); return LIT_INTEGER; }
+[0-9]+\.[0-9]+ 	        { hash_insert(SYMBOL_LIT_REAL, yytext); return LIT_REAL; }
+'.' 					{ hash_insert(SYMBOL_LIT_CHAR, yytext); return LIT_CHAR; }
+\"(\\.|[^\"])*\" 		{ hash_insert(SYMBOL_LIT_STRING, yytext); return LIT_STRING; }
 
  /*Comentários, espaços, quebras de linha...*/
 
@@ -114,29 +114,6 @@ void initMe(void){
 int yywrap() {
     running = 0;
     return 1;
-}
-
-int insert_token(int token) {
-
-    switch (token) {
-        case LIT_INTEGER :
-            hash_insert(SYMBOL_LIT_INT, yytext);
-            break;
-        case LIT_REAL :
-            hash_insert(SYMBOL_LIT_REAL, yytext);
-            break;
-        case LIT_CHAR :
-            hash_insert(SYMBOL_LIT_CHAR, yytext);
-            break;
-        case LIT_STRING :
-            hash_insert(SYMBOL_LIT_STRING, yytext);
-            break;
-        case TK_IDENTIFIER :
-            hash_insert(SYMBOL_IDENTIFIER, yytext);
-            break;
-    }
-    hash_insert(token, yytext);
-	return token;
 }
 
 int getLineNumber(void) {

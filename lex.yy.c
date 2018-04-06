@@ -1027,29 +1027,29 @@ return OPERATOR_OR;
 case 39:
 YY_RULE_SETUP
 #line 73 "scanner.l"
-return insert_token(TK_IDENTIFIER);
+{ hash_insert(SYMBOL_IDENTIFIER, yytext); return TK_IDENTIFIER; }
 	YY_BREAK
 /*Literais*/
 case 40:
 YY_RULE_SETUP
 #line 77 "scanner.l"
-return insert_token(LIT_INTEGER);
+{ hash_insert(SYMBOL_LIT_INT, yytext); return LIT_INTEGER; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
 #line 78 "scanner.l"
-return insert_token(LIT_REAL);
+{ hash_insert(SYMBOL_LIT_REAL, yytext); return LIT_REAL; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 79 "scanner.l"
-return insert_token(LIT_CHAR);
+{ hash_insert(SYMBOL_LIT_CHAR, yytext); return LIT_CHAR; }
 	YY_BREAK
 case 43:
 /* rule 43 can match eol */
 YY_RULE_SETUP
 #line 80 "scanner.l"
-return insert_token(LIT_STRING);
+{ hash_insert(SYMBOL_LIT_STRING, yytext); return LIT_STRING; }
 	YY_BREAK
 /*Comentários, espaços, quebras de linha...*/
 
@@ -2129,29 +2129,6 @@ void initMe(void){
 int yywrap() {
     running = 0;
     return 1;
-}
-
-int insert_token(int token) {
-
-    switch (token) {
-        case LIT_INTEGER :
-            hash_insert(SYMBOL_LIT_INT, yytext);
-            break;
-        case LIT_REAL :
-            hash_insert(SYMBOL_LIT_REAL, yytext);
-            break;
-        case LIT_CHAR :
-            hash_insert(SYMBOL_LIT_CHAR, yytext);
-            break;
-        case LIT_STRING :
-            hash_insert(SYMBOL_LIT_STRING, yytext);
-            break;
-        case TK_IDENTIFIER :
-            hash_insert(SYMBOL_IDENTIFIER, yytext);
-            break;
-    }
-    hash_insert(token, yytext);
-	return token;
 }
 
 int getLineNumber(void) {
