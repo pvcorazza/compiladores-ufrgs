@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 
     int tok;
     if (argc < 2) {
-        fprintf(stderr, "Please, call: etapa1 file_name. \n");
+        fprintf(stderr, "Please, call: etapa2 file_name. \n");
         exit(1);
     }
 
