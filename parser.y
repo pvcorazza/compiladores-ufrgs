@@ -1,12 +1,14 @@
 %{
-
+#include "symbol_table.h"
 #include <stdio.h>
 #include <stdlib.h>
 int yylex();
 void yyerror(const char *s);
 int getLineNumber();
-
 %}
+%union{
+	hash_entry* symbol;
+}
 
 %define parse.error verbose
 
@@ -30,12 +32,14 @@ int getLineNumber();
 %token OPERATOR_AND
 %token OPERATOR_OR
 
-%token TK_IDENTIFIER
-%token LIT_INTEGER
-%token LIT_REAL
-%token LIT_CHAR
-%token LIT_STRING
+%token <symbol> TK_IDENTIFIER
+%token <symbol> LIT_INTEGER
+%token <symbol>  LIT_REAL
+%token <symbol>  LIT_CHAR
+%token <symbol>  LIT_STRING
 %token TOKEN_ERROR
+
+
 
 %left '<' '>'
 %left '!' OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_NE OPERATOR_AND OPERATOR_OR

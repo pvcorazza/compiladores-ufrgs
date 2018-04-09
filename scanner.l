@@ -4,10 +4,8 @@
 */
 
 %{
-
+	#include "symbol_table.h"
     #include "y.tab.h"
-    #include "symbol_table.h"
-
     int running = 1;
     int lineNumber = 1;
     void initMe(void);
@@ -70,14 +68,14 @@
 
  /*Identificadores*/
 
-([A-Za-z]|_)+([0-9]|([A-Za-z]|_))* { hash_insert(SYMBOL_IDENTIFIER, yytext); return TK_IDENTIFIER; }
+([A-Za-z]|_)+([0-9]|([A-Za-z]|_))* { yylval.symbol = hash_insert(SYMBOL_IDENTIFIER, yytext); return TK_IDENTIFIER; }
 
  /*Literais*/
 
-[0-9]+ 			        { hash_insert(SYMBOL_LIT_INT, yytext); return LIT_INTEGER; }
-[0-9]+\.[0-9]+ 	        { hash_insert(SYMBOL_LIT_REAL, yytext); return LIT_REAL; }
-'.' 					{ hash_insert(SYMBOL_LIT_CHAR, yytext); return LIT_CHAR; }
-\"(\\.|[^\"])*\" 		{ hash_insert(SYMBOL_LIT_STRING, yytext); return LIT_STRING; }
+[0-9]+ 			        { yylval.symbol = hash_insert(SYMBOL_LIT_INT, yytext); return LIT_INTEGER; }
+[0-9]+\.[0-9]+ 	        { yylval.symbol = hash_insert(SYMBOL_LIT_REAL, yytext); return LIT_REAL; }
+'.' 					{ yylval.symbol = hash_insert(SYMBOL_LIT_CHAR, yytext); return LIT_CHAR; }
+\"(\\.|[^\"])*\" 		{ yylval.symbol = hash_insert(SYMBOL_LIT_STRING, yytext); return LIT_STRING; }
 
  /*Comentários, espaços, quebras de linha...*/
 
