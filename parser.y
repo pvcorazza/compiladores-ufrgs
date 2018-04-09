@@ -45,7 +45,8 @@ int getLineNumber();
 %left '+' '-'
 %left '*' '/'
 %right KW_THEN KW_ELSE
-
+%nonassoc TK_IDENTIFIER
+%nonassoc '('
 
 %%
 
@@ -130,7 +131,8 @@ comando_return: KW_RETURN expressao	;
 /* Expressoes aritméticas e logicas */
 
 expressao: TK_IDENTIFIER
-	| TK_IDENTIFIER '(' function_call_args ')'
+    | TK_IDENTIFIER '(' ')'
+	| TK_IDENTIFIER '(' argumentos_funcao ')'
 	| TK_IDENTIFIER '[' expressao ']'
 	| literal
 	| '(' expressao ')'
@@ -156,13 +158,9 @@ literal : LIT_CHAR
 	| LIT_REAL
 	;
 
-function_call_args: /*vazio*/
-	| expressao function_call_more_args
-	;
-
-function_call_more_args: /*vazio*/
-	| ',' expressao function_call_more_args
-	;
+argumentos_funcao: expressao ',' argumentos_funcao
+    | expressao
+;
 
 /* Comandos de controle de fluxo */
 

@@ -26,8 +26,8 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Compilation Successful! \n");
 
 
-    printf("\n --- Debug symbol table: ---\n");
-    hash_print();
+//    printf("\n --- Debug symbol table: ---\n");
+//    hash_print();
     exit(0);
 
 }
