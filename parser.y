@@ -5,6 +5,7 @@
 int yylex();
 void yyerror(const char *s);
 int getLineNumber();
+
 %}
 %union{
 	hash_entry* symbol;
@@ -39,14 +40,10 @@ int getLineNumber();
 %token <symbol>  LIT_STRING
 %token TOKEN_ERROR
 
-
-
 %left '<' '>'
 %left '!' OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_NE OPERATOR_AND OPERATOR_OR
 %left '+' '-'
 %left '*' '/'
-
-%right KW_THEN KW_ELSE
 
 
 %%
@@ -100,24 +97,17 @@ parametros:  tipos_var_globais TK_IDENTIFIER
 bloco_comandos: '{' lista_comandos '}'
 ;
 
-lista_comandos: /*vazio*/
-	| comando ultimo_comando
+lista_comandos: comando
+	| comando ';' lista_comandos
 	;
 
-ultimo_comando : ';' comando ultimo_comando
-|
-;
-
 comando:
+	| bloco_comandos
 	| atribuicao
-	| if_control
-	| for_control
-	| while_control
+	| control
 	| comando_read
 	| comando_print
 	| comando_return
-	| bloco_comandos
-	;
 
 atribuicao: TK_IDENTIFIER '=' expressao
 	| TK_IDENTIFIER'['expressao']' '=' expressao
@@ -138,30 +128,11 @@ comando_return: KW_RETURN expressao	;
 
 /* Expressoes aritméticas e logicas */
 
-
-identificador: TK_IDENTIFIER;
-chamada_de_funcao: identificador '('function_call_args')'
-
-
-vetor_indexado: identificador'[' expressao ']';
-
-referenciacao: '&'TK_IDENTIFIER;
-dereferenciacao: '#'TK_IDENTIFIER;
-
-operandos: TK_IDENTIFIER
+expressao: TK_IDENTIFIER
+	| TK_IDENTIFIER '(' function_call_args ')'
+	| TK_IDENTIFIER '[' expressao ']'
 	| literal
-	| referenciacao
-	| dereferenciacao
-	| vetor_indexado
-	| chamada_de_funcao
-	;
-
-expressao: operandos
-
-	//| TK_IDENTIFIER '(' function_call_args ')'
-	//| TK_IDENTIFIER '[' expressao ']'
-	//| literal
-	| '('expressao')'
+	| '(' expressao ')'
 	| expressao '+' expressao
 	| expressao '-' expressao
 	| expressao '*' expressao
@@ -175,6 +146,8 @@ expressao: operandos
 	| expressao '>' expressao
 	| expressao '<' expressao
 	| '!' expressao
+	| '&' TK_IDENTIFIER
+	| '#' TK_IDENTIFIER
 	;
 
 literal : LIT_CHAR
@@ -193,13 +166,11 @@ function_call_more_args: /*vazio*/
 
 /* Comandos de controle de fluxo */
 
-if_control: KW_IF '(' expressao ')' KW_THEN comando
+control: KW_IF '(' expressao ')' KW_THEN comando
 	| KW_IF '(' expressao ')' KW_THEN comando KW_ELSE comando
+	| KW_WHILE '(' expressao ')' comando
+	| KW_FOR '(' TK_IDENTIFIER '=' expressao KW_TO expressao ')' comando
 	;
-
-while_control:  KW_WHILE '(' expressao ')' comando;
-
-for_control:  KW_FOR '(' TK_IDENTIFIER '=' expressao KW_TO expressao ')' comando;
 
 %%
 
