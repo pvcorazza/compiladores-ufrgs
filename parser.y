@@ -44,6 +44,7 @@ int getLineNumber();
 %left '!' OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_NE OPERATOR_AND OPERATOR_OR
 %left '+' '-'
 %left '*' '/'
+%right KW_THEN KW_ELSE
 
 
 %%
