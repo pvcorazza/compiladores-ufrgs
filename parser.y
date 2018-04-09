@@ -154,7 +154,6 @@ expressao: TK_IDENTIFIER
 literal : LIT_CHAR
 	| LIT_INTEGER
 	| LIT_REAL
-	//| LIT_STRING /* não tenho certeza que pode string|| acho que nao*/
 	;
 
 function_call_args: /*vazio*/
