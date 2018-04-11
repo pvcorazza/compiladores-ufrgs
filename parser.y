@@ -11,8 +11,6 @@ int getLineNumber();
 	hash_entry* symbol;
 }
 
-%define parse.error verbose
-
 %token KW_CHAR
 %token KW_INT
 %token KW_FLOAT
@@ -40,8 +38,9 @@ int getLineNumber();
 %token <symbol>  LIT_STRING
 %token TOKEN_ERROR
 
-%left '<' '>'
+
 %left '!' OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_NE OPERATOR_AND OPERATOR_OR
+%left '<' '>'
 %left '+' '-'
 %left '*' '/'
 %right KW_THEN KW_ELSE
