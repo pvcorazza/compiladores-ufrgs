@@ -66,4 +66,6 @@ AST* astCreate(int type, hash_entry* symbol, AST* son0, AST* son1, AST* son2, AS
 
 void astPrint(AST *node, int level);
 
+void uncompile(AST *ast);
+
 #endif

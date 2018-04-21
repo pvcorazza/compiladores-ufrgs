@@ -79,7 +79,7 @@ AST *root;
 
 %%
 
-programa : corpo_programa { root = $$; astPrint(root, 0); }
+programa : corpo_programa { root = $$; uncompile($$); }
 	;
 
 corpo_programa: decl_var_globais corpo_programa { $$ = astCreate (AST_CORPO, 0, $1, $2, 0, 0); }
