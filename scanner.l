@@ -4,7 +4,8 @@
 */
 
 %{
-	#include "symbol_table.h"
+
+    #include "ast.h"
     #include "y.tab.h"
     int running = 1;
     int lineNumber = 1;
