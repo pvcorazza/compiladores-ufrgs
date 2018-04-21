@@ -2,8 +2,7 @@
 
 int a = 0;
 int i = 0;
-int v[10]: 0 0 0 0 0 0 0 0 0 0; 
-int mat[10]; 
+int mat[10];
 float f = 10.55;
 char c = 'x';
 char d = 65;
@@ -28,7 +27,7 @@ int main()
     };
 
   print "Incrementado algumas vezes fica " a "\n";
-  if (a==5) then 
+  if (a==5) then
     print "Parou no meio\n";
   if (a==11) then
     ;
@@ -47,5 +46,5 @@ int incn (int x, int n)
 int voidfunc()
   {
   }
-  
+
 

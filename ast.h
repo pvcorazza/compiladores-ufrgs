@@ -52,6 +52,7 @@
 #define AST_SYMBOL 240
 #define AST_NOT 241
 #define AST_PARAM 242
+#define AST_LISTA_INIC 243
 
 
 

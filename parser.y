@@ -90,8 +90,8 @@ corpo_programa: decl_var_globais corpo_programa { $$ = astCreate (AST_CORPO, 0, 
 /* Regras de declaracoes de variaveis globais.*/
 
 decl_var_globais: tipos_var_globais TK_IDENTIFIER '=' valor_inicializacao ';' { $$ = astCreate(AST_DECL_GLOBAL, $2, $1, $4, 0, 0); };
-	| tipos_var_globais TK_IDENTIFIER'['LIT_INTEGER']' ';' { $$ = astCreate(AST_VETOR_VAZIO, $2, $1, $4, 0, 0); }
-	| tipos_var_globais TK_IDENTIFIER'['LIT_INTEGER']' ':' lista_valores_inicializacao';' { $$ = astCreate(AST_VETOR_INIC, $2, $1, $4, $7, 0); }
+	| tipos_var_globais TK_IDENTIFIER'['LIT_INTEGER']' ';' { $$ = astCreate(AST_VETOR_VAZIO, $2, $1, astCreate(AST_SYMBOL, $4, 0, 0, 0, 0), 0, 0); }
+	| tipos_var_globais TK_IDENTIFIER'['LIT_INTEGER']' ':' lista_valores_inicializacao';' { $$ = astCreate(AST_VETOR_INIC, $2, $1, astCreate(AST_SYMBOL, $4, 0, 0, 0, 0), $7, 0); }
 	| tipos_var_globais '#'TK_IDENTIFIER '=' valor_inicializacao ';' { $$ = astCreate(AST_DECL_PONTEIRO, $3, $1, $5, 0, 0); }
 	;
 
@@ -105,8 +105,8 @@ valor_inicializacao: LIT_INTEGER { $$ = astCreate(AST_SYMBOL, $1, 0, 0, 0, 0); }
 	| LIT_REAL { $$ = astCreate(AST_SYMBOL, $1, 0, 0, 0, 0); };
 	;
 
-lista_valores_inicializacao: valor_inicializacao
-	| valor_inicializacao lista_valores_inicializacao
+lista_valores_inicializacao: valor_inicializacao {$$=$1;};
+	| valor_inicializacao lista_valores_inicializacao  { $$ = astCreate(AST_LISTA_INIC, 0, $1, $2, 0, 0); }
 	;
 
 /*Regras de definicao de funcoes.*/
@@ -148,10 +148,10 @@ comando_read: KW_READ TK_IDENTIFIER { $$ = astCreate(AST_READ, $2, 0, 0, 0, 0); 
 comando_print: KW_PRINT lista_elementos_print { $$ = astCreate(AST_PRINT, 0, $2, 0, 0, 0); }
 	;
 
-lista_elementos_print: LIT_STRING { $$ = astCreate(AST_SYMBOL, $1, 0, 0, 0, 0); }
+lista_elementos_print: LIT_STRING { $$ =  astCreate(AST_SYMBOL, $1, 0, 0, 0, 0); }
  	| expressao { $$ = $1; }
-	| lista_elementos_print expressao { $$ = astCreate(AST_LISTA_PRINT, $2, $1, 0, 0, 0); }
-	| lista_elementos_print LIT_STRING { $$ = astCreate(AST_LISTA_PRINT, astCreate(AST_SYMBOL, $2, 0, 0, 0, 0) , $1, 0, 0, 0); }
+	| lista_elementos_print expressao { $$ = astCreate(AST_LISTA_PRINT, 0, $1, $2, 0, 0); }
+	| lista_elementos_print LIT_STRING { $$ = astCreate(AST_LISTA_PRINT, 0,$1,astCreate(AST_SYMBOL, $2, 0, 0, 0, 0), 0, 0); }
 	;
 
 comando_return: KW_RETURN expressao	{ $$ = astCreate(AST_RETURN, 0, $2, 0, 0, 0); }
@@ -178,8 +178,8 @@ expressao: TK_IDENTIFIER {$$ = astCreate(AST_IDENTIFICADOR,$1,0,0,0,0);}
 	| expressao '>' expressao {$$ = astCreate(AST_G,0,$1,$3,0,0);}
 	| expressao '<' expressao {$$ = astCreate(AST_L,0,$1,$3,0,0);}
 	| '!' expressao {$$ = astCreate(AST_NOT,0,$2,0,0,0);}
-	| '&' TK_IDENTIFIER {$$ = astCreate(AST_IDENT_REFERENCIA,0,$2,0,0,0);}
-	| '#' TK_IDENTIFIER {$$ = astCreate(AST_IDENT_DERREFERENCIA,0,$2,0,0,0);}
+	| '&' TK_IDENTIFIER {$$ = astCreate(AST_IDENT_REFERENCIA,$2,0,0,0,0);}
+	| '#' TK_IDENTIFIER {$$ = astCreate(AST_IDENT_DERREFERENCIA,$2,0,0,0,0);}
 	;
 
 literal : LIT_CHAR { $$ = astCreate(AST_SYMBOL, $1, 0, 0, 0, 0); };
@@ -196,7 +196,7 @@ argumentos_funcao: expressao ',' argumentos_funcao { $$ = astCreate(AST_ARG_FUNC
 control: KW_IF '(' expressao ')' KW_THEN comando { $$ = astCreate(AST_IF, 0, $3, $6, 0, 0); };
 	| KW_IF '(' expressao ')' KW_THEN comando KW_ELSE comando { $$ = astCreate(AST_IF_ELSE, 0, $3, $6, $8, 0); };
 	| KW_WHILE '(' expressao ')' comando { $$ = astCreate(AST_WHILE, 0, $3, $5, 0, 0); };
-	| KW_FOR '(' TK_IDENTIFIER '=' expressao KW_TO expressao ')' comando { $$ = astCreate(AST_FOR, 0, $3, $5, $7, $9); };
+	| KW_FOR '(' TK_IDENTIFIER '=' expressao KW_TO expressao ')' comando { $$ = astCreate(AST_FOR, 0, $5, $7, $9,0); };
 	;
 
 %%
