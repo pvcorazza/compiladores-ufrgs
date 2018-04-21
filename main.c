@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "symbol_table.h"
+#include "ast.h"
 
 extern FILE *yyin;
 extern char *yytext;
@@ -12,8 +11,9 @@ extern int yyparse();
 int main(int argc, char **argv) {
 
     int tok;
-    if (argc < 2) {
-        fprintf(stderr, "Please, call: etapa2 file_name. \n");
+
+    if (argc < 3) {
+        fprintf(stderr, "Please, call: etapa3 nomearquivo1 nomearquivo2. \n");
         exit(1);
     }
 
@@ -21,13 +21,18 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Cannot open file %s. \n", argv[1]);
         exit(2);
     }
+
+    output_file = fopen(argv[2], "w");
+
     initMe();
+
+
     yyparse();
     fprintf(stderr, "Compilation Successful! \n");
 
-
 //    printf("\n --- Debug symbol table: ---\n");
 //    hash_print();
+    fclose(output_file);
     exit(0);
 
 }

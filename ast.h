@@ -53,8 +53,10 @@
 #define AST_NOT 241
 #define AST_PARAM 242
 #define AST_LISTA_INIC 243
+#define AST_CHAMADA_FUNCAO 244
 
-
+FILE *input_file;
+FILE *output_file;
 
 typedef struct ast_node {
     int type;

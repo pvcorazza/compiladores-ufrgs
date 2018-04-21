@@ -161,7 +161,7 @@ comando_return: KW_RETURN expressao	{ $$ = astCreate(AST_RETURN, 0, $2, 0, 0, 0)
 
 expressao: TK_IDENTIFIER {$$ = astCreate(AST_IDENTIFICADOR,$1,0,0,0,0);}
     | TK_IDENTIFIER '(' ')' {$$ = astCreate(AST_IDENTIFICADOR,$1,0,0,0,0);}
-	| TK_IDENTIFIER '(' argumentos_funcao ')' {$$ = astCreate(AST_IDENTIFICADOR,$1,$3,0,0,0);}
+	| TK_IDENTIFIER '(' argumentos_funcao ')' {$$ = astCreate(AST_CHAMADA_FUNCAO,$1,$3,0,0,0);}
 	| TK_IDENTIFIER '[' expressao ']'{$$ = astCreate(AST_IDENTIFICADOR,$1,$3,0,0,0);}
 	| literal {$$=$1;};
 	| '(' expressao ')' {$$ = astCreate(AST_EXP_PARENTESES,0,$2,0,0,0);}
@@ -196,7 +196,7 @@ argumentos_funcao: expressao ',' argumentos_funcao { $$ = astCreate(AST_ARG_FUNC
 control: KW_IF '(' expressao ')' KW_THEN comando { $$ = astCreate(AST_IF, 0, $3, $6, 0, 0); };
 	| KW_IF '(' expressao ')' KW_THEN comando KW_ELSE comando { $$ = astCreate(AST_IF_ELSE, 0, $3, $6, $8, 0); };
 	| KW_WHILE '(' expressao ')' comando { $$ = astCreate(AST_WHILE, 0, $3, $5, 0, 0); };
-	| KW_FOR '(' TK_IDENTIFIER '=' expressao KW_TO expressao ')' comando { $$ = astCreate(AST_FOR, 0, $5, $7, $9,0); };
+	| KW_FOR '(' TK_IDENTIFIER '=' expressao KW_TO expressao ')' comando { $$ = astCreate(AST_FOR, $3, $5, $7, $9, 0); };
 	;
 
 %%
