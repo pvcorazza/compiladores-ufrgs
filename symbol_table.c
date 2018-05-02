@@ -8,6 +8,7 @@ int hash_generate() {
     for (i=0; i<SIZE; i++) {
         hash_table[i]=0;
     }
+    return 0;
 }
 
 int hash_address(char* text) {

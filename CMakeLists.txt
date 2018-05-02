@@ -3,5 +3,5 @@ project(teste)
 
 set(CMAKE_C_STANDARD 99)
 
-set(SOURCE_FILES main.c scanner.l symbol_table.c lex.yy.c y.tab.c parser.y)
+set(SOURCE_FILES main.c scanner.l symbol_table.c lex.yy.c y.tab.c parser.y ast.c)
 add_executable(teste ${SOURCE_FILES})

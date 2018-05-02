@@ -10,8 +10,6 @@ extern int yyparse();
 
 int main(int argc, char **argv) {
 
-    int tok;
-
     if (argc < 3) {
         fprintf(stderr, "Please, call: etapa3 nomearquivo1 nomearquivo2. \n");
         exit(1);
