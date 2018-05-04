@@ -76,8 +76,8 @@ void astPrint(AST *node, int level) {
         case AST_LISTA_PRINT:
             fprintf(stderr,"AST_LISTA_PRINT");
             break;
-        case AST_IDENTIFICADOR:
-            fprintf(stderr,"AST_IDENTIFICADOR");
+        case AST_VET:
+            fprintf(stderr,"AST_VET");
             break;
         case AST_EXP_PARENTESES:
             fprintf(stderr,"AST_EXP_PARENTESES");
@@ -269,11 +269,15 @@ void uncompile(AST *ast){
                 fprintf(output_file," ");
                 uncompile(ast->son[1]);
                 break;
-            case AST_IDENTIFICADOR:
-                fprintf(output_file,"%s", ast->symbol->text);
+            case AST_VET:
+                fprintf(output_file,"%s[", ast->symbol->text);
+                uncompile(ast->son[0]);
+                fprintf(output_file,"]");
                 break;
             case AST_EXP_PARENTESES:
-                fprintf(output_file,"AST_EXP_PARENTESES");
+                fprintf(output_file,"(");
+                uncompile(ast->son[0]);
+                fprintf(output_file,")");
                 break;
             case AST_SOMA:
                 uncompile(ast->son[0]);

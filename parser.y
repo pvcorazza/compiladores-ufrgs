@@ -160,10 +160,10 @@ comando_return: KW_RETURN expressao	{ $$ = astCreate(AST_RETURN, 0, $2, 0, 0, 0)
 
 /* Expressoes aritméticas e logicas */
 
-expressao: TK_IDENTIFIER {$$ = astCreate(AST_IDENTIFICADOR,$1,0,0,0,0);}
-    | TK_IDENTIFIER '(' ')' {$$ = astCreate(AST_IDENTIFICADOR,$1,0,0,0,0);}
+expressao: TK_IDENTIFIER {$$ = astCreate(AST_SYMBOL,$1,0,0,0,0);}
+    | TK_IDENTIFIER '(' ')' {$$ = astCreate(AST_CHAMADA_FUNCAO,$1,0,0,0,0);}
 	| TK_IDENTIFIER '(' argumentos_funcao ')' {$$ = astCreate(AST_CHAMADA_FUNCAO,$1,$3,0,0,0);}
-	| TK_IDENTIFIER '[' expressao ']'{$$ = astCreate(AST_IDENTIFICADOR,$1,$3,0,0,0);}
+	| TK_IDENTIFIER '[' expressao ']'{$$ = astCreate(AST_VET,$1,$3,0,0,0);}
 	| literal {$$=$1;};
 	| '(' expressao ')' {$$ = astCreate(AST_EXP_PARENTESES,0,$2,0,0,0);}
 	| expressao '+' expressao {$$ = astCreate(AST_SOMA,0,$1,$3,0,0);}
