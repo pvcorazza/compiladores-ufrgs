@@ -20,9 +20,29 @@ int hash_address(char* text) {
     return address-1;
 }
 
+hash_entry* hash_find(char* text)
+{
+    int address = hash_address(text);
+    hash_entry* entry = hash_table[address];
+
+    while(entry != NULL)
+    {
+        int a = strcmp(text, entry->text);
+        if(a == 0)
+            return entry;
+        else
+            entry = entry->next;
+    }
+    return 0;
+}
+
 hash_entry* hash_insert(int type, char* text) {
     int address;
     hash_entry *node=0;
+
+    if((node = hash_find(text)) != NULL)
+        return node;
+    ;
     address = hash_address(text);
     node = calloc(1,sizeof(hash_table));
     node->text = calloc(strlen(text)+1, sizeof(char));

@@ -11,7 +11,7 @@ extern int yyparse();
 int main(int argc, char **argv) {
 
     if (argc < 3) {
-        fprintf(stderr, "Please, call: etapa3 nomearquivo1 nomearquivo2. \n");
+        fprintf(stderr, "Please, call: etapa4 nome_arquivo\n");
         exit(1);
     }
 
@@ -24,12 +24,11 @@ int main(int argc, char **argv) {
 
     initMe();
 
-
     yyparse();
-    fprintf(stderr, "Compilation Successful! \n");
+    fprintf(stderr, "\nCompilation Successful! \n");
 
-//    printf("\n --- Debug symbol table: ---\n");
-//    hash_print();
+    printf("\n --- Debug symbol table: ---\n");
+    hash_print();
     fclose(output_file);
     exit(0);
 
