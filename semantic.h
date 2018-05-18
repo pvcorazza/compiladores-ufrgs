@@ -7,6 +7,8 @@
 
 #include "ast.h"
 
+void semantic_analisys (AST *node);
 void set_declarations(AST *node);
+void check_undeclared (AST *node);
 
 #endif //TESTE_SEMANTIC_H

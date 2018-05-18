@@ -6,6 +6,14 @@
 #include <stdlib.h>
 #include "semantic.h"
 
+void semantic_analisys (AST *node) {
+
+    set_declarations(node);
+    check_undeclared(node);
+
+}
+
+
 void set_declarations(AST *node) {
     int i;
     if (!node) return;
@@ -34,5 +42,17 @@ void set_declarations(AST *node) {
     }
     for (i = 0; i < MAX_SONS; ++i) {
         set_declarations(node->son[i]);
+    }
+}
+
+void check_undeclared(AST *node){
+    if(!node) return;
+    for (int i=0; i<MAX_SONS; i++) {
+        check_undeclared(node->son[i]);
+    }
+
+    if(node->symbol != 0 && node->symbol->type == SYMBOL_IDENTIFIER){
+        fprintf(stderr, "[LINE %d] Semantic Error: Symbol '%s' is not declared.\n",  node->line_number, node->symbol->text);
+        exit(4);
     }
 }

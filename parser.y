@@ -81,7 +81,7 @@ AST *root;
 
 %%
 
-programa : corpo_programa {root = $$; astPrint($$,0); set_declarations(root);}
+programa : corpo_programa {root = $$; astPrint($$,0); semantic_analisys(root);}
 	;
 
 corpo_programa: decl_var_globais corpo_programa { $$ = astCreate (AST_CORPO, 0, $1, $2, 0, 0); }
