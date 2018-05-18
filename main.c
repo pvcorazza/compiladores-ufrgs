@@ -10,7 +10,7 @@ extern int yyparse();
 
 int main(int argc, char **argv) {
 
-    if (argc < 3) {
+    if (argc < 1) {
         fprintf(stderr, "Please, call: etapa4 nome_arquivo\n");
         exit(1);
     }
