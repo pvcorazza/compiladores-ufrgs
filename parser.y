@@ -205,6 +205,6 @@ control: KW_IF '(' expressao ')' KW_THEN comando { $$ = astCreate(AST_IF, 0, $3,
 
 void yyerror (char const *s)
 {
-    fprintf(stderr,"Line %d: %s\n",getLineNumber(),s);
+    fprintf(stderr,"[LINE %d] %s\n",getLineNumber(),s);
     exit(3);
 }

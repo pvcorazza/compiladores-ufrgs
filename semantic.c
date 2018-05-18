@@ -9,18 +9,27 @@
 void set_declarations(AST *node) {
     int i;
     if (!node) return;
-    if (node->type == AST_DECL_GLOBAL) {
+    if (node->type == AST_DECL_GLOBAL || node->type == AST_VETOR_VAZIO || node->type == AST_VETOR_INIC || node->type == AST_DECL_PONTEIRO || node->type == AST_DEF_FUNCAO) {
         if (node->symbol->type != SYMBOL_IDENTIFIER) {
-            fprintf(stderr, "Semantic error: Symbol '%s' already declared. Line \n", node->symbol->text);
+            fprintf(stderr, "[LINE %d] Semantic Error: Symbol '%s' already declared.\n",  node->line_number, node->symbol->text);
             exit(4);
         } else {
-            node->symbol->type = SYMBOL_SCALAR;
+            switch (node->type) {
+                case AST_DECL_GLOBAL: node->symbol->type = SYMBOL_SCALAR;
+                    break;
+                case AST_VETOR_VAZIO: node->symbol->type = SYMBOL_VECTOR;
+                    break;
+                case AST_VETOR_INIC: node->symbol->type = SYMBOL_VECTOR;
+                    break;
+                case AST_DECL_PONTEIRO: node->symbol->type = SYMBOL_POINTER;
+                    break;
+                case AST_DEF_FUNCAO: node->symbol->type = SYMBOL_FUNCTION;
+                    break;
+                default: break;
+            }
             if (node->son[0]->type == AST_INT) node->symbol->datatype = DATATYPE_INT;
-//            if(node->son[0]->type == ASTREE_SHORT) node->symbol->datatype = SYMBOL_DATATYPE_SHORT;
-//            if(node->son[0]->type == ASTREE_LONG) node->symbol->datatype = SYMBOL_DATATYPE_LONG;
-//            if(node->son[0]->type == ASTREE_FLOAT) node->symbol->datatype = SYMBOL_DATATYPE_FLOAT;
-//            if(node->son[0]->type == ASTREE_DOUBLE) node->symbol->datatype = SYMBOL_DATATYPE_DOUBLE;
-
+            if (node->son[0]->type == AST_FLOAT) node->symbol->datatype = DATATYPE_FLOAT;
+            if (node->son[0]->type == AST_CHAR) node->symbol->datatype = DATATYPE_CHAR;
         }
     }
     for (i = 0; i < MAX_SONS; ++i) {

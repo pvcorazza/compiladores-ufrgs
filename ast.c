@@ -5,11 +5,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
+extern int getLineNumber();
 
 AST* astCreate(int type, hash_entry* symbol, AST* son0, AST* son1, AST* son2, AST* son3) {
     AST *node = (AST*) calloc(1, sizeof(AST));
     node->type = type;
     node->symbol = symbol;
+    node->line_number = getLineNumber();
     node->son[0] = son0;
     node->son[1] = son1;
     node->son[2] = son2;
