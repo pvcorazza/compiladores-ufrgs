@@ -37,6 +37,7 @@ void set_declarations(AST *node) {
                 case AST_VETOR_INIC: node->symbol->type = SYMBOL_VECTOR;
                     break;
                 case AST_DECL_PONTEIRO: node->symbol->type = SYMBOL_POINTER;
+					printf("%s\n", "Declaracao de ponteiro");
                     break;
                 case AST_DEF_FUNCAO:
 					node->symbol->type = SYMBOL_FUNCTION;
@@ -91,19 +92,67 @@ void check_usage(AST *node){
 	switch(node->type){
 		case AST_ATRIBUICAO:
 
+			//Atribuicao para um identificador que eh ponteiro:
 			if(node->symbol->type == SYMBOL_POINTER){
-				printf("%s\n","Atribuicao de ponteiro");
+				//printf("%s\n","Atribuicao de ponteiro");
 				verifica_atribuicao_ponteiros(node);
-				printf("Aponta para id = %s\n",node->point_to_symbol->text);
+				//printf("Aponta para id = %s\n",node->point_to_symbol->text);
 
 			}
+			//Atribuicao para identificador escalar:
 			else{
+
 				if(node->symbol->type != SYMBOL_SCALAR){
 						fprintf(stderr,
 							"[LINE %d] ERRO: identificador %s deve ser escalar.\n",
 							node->line_number,node->symbol->text);
 						exit(4);
-					}
+				}
+
+				switch (node->son[0]->type) {
+					case AST_IDENT_DERREFERENCIA:
+						printf("Derreferencia\n");
+						printf("Pegar valor do ponteiro\n");
+
+						//Valor do identificador na hash deve receber o valor
+						//do conteudo do ponteiro
+
+						//procura declaracao do ponteiro
+						AST *node_decl_pointer = procura_declaracao_ponteiro(nodo_raiz,node->son[0]->symbol->text);
+
+						printf("Nodo declaracao ponteiro id :%s\n", node_decl_pointer->symbol->text);
+
+
+						if(node_decl_pointer->symbol->type == SYMBOL_POINTER){
+
+							printf("Simbolo eh um ponteiro\n");
+							printf("DATATYPE = %d\n",node_decl_pointer->symbol->datatype);
+						}
+
+
+						printf("Valor a ser atribuido %s\n",node_decl_pointer->son[1]->symbol->text);
+
+						//coloca o valor na entrada hash correspondente ao identificador
+						//node->symbol->text = node_decl_pointer->son[1]->symbol->text;
+
+
+						//Procura a declaracao do identificador
+						AST * nodo_decl = procura_declaracao_global(nodo_raiz,node->symbol->text);
+						printf("identificador: %s\n", nodo_decl->symbol->text);
+
+						printf("Valor antigo do identificador: %s\n", nodo_decl->son[1]->symbol->text);
+
+						//Coloca novo valor na hash
+						nodo_decl->son[1]->symbol->text = node_decl_pointer->son[1]->symbol->text;
+
+						printf("Novo valor do identificador: %s\n", nodo_decl->son[1]->symbol->text);
+
+
+
+
+
+				}
+
 			}
 
 			break;
@@ -160,9 +209,7 @@ void check_usage(AST *node){
 
 			break;
 
-			case AST_DECL_PONTEIRO:
-				printf("Declaracao de ponteiro\n");
-				break;
+
 
 
 
@@ -202,6 +249,56 @@ AST *procura_def_funcao(AST *node, char *nome)
 	return 0;
 }
 
+AST *procura_declaracao_global(AST *node, char *nome)
+{
+	int i;
+	AST *funcao;
+
+	if(!node) return 0;
+
+	if(node->type == AST_DECL_GLOBAL)
+		if(node->symbol != NULL){
+			if(strcmp(node->symbol->text, nome) == 0)
+				return node;
+		}
+
+	for(i=0; i < MAX_SONS; i++)
+		if(node->son[i] != NULL) {
+			funcao = procura_declaracao_global(node->son[i], nome);
+			if(funcao)
+				return funcao;
+		}
+	return 0;
+}
+
+AST *procura_declaracao_ponteiro(AST *node, char *nome)
+{
+	int i;
+	AST *funcao;
+
+	//printf("Tipo da declaracao: %d\n",node->type);
+	if(!node) return 0;
+
+	if(node->type == AST_DECL_PONTEIRO)
+		if(node->symbol != NULL){
+			if(strcmp(node->symbol->text, nome) == 0){
+				//printf("Achou id %s\n",nome );
+				printf("Achou declaracao de ponteiro\n");
+				return node;
+
+			}
+		}
+
+
+	for(i=0; i < MAX_SONS; i++)
+		if(node->son[i] != NULL) {
+			funcao = procura_declaracao_ponteiro(node->son[i], nome);
+			if(funcao)
+				return funcao;
+		}
+	return 0;
+}
+
 void verifica_tipos_parametros_funcao(AST* nodecall)
 {
 	if(!nodecall) return;
@@ -234,9 +331,12 @@ void verifica_atribuicao_ponteiros(AST *node){
 	AST* nodedef;
 	switch (node->son[0]->type) {
 		case AST_IDENT_REFERENCIA:
-			printf("%s\n", "Referencia");
+			//printf("%s\n", "Referencia");
 			node->point_to_symbol = node->son[0]->symbol;
-
 			break;
 	}
+}
+
+void derreferencia(AST *node){
+
 }

@@ -14,4 +14,6 @@ void check_usage(AST *node);
 int conta_parametros(AST *node);
 AST *procura_def_funcao(AST *node, char *nome);
 void verifica_atribuicao_ponteiros(AST *node);
+AST *procura_declaracao_ponteiro(AST *node, char *nome);
+AST *procura_declaracao_global(AST *node, char *nome);
 #endif //TESTE_SEMANTIC_H
