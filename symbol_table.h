@@ -20,6 +20,7 @@ typedef struct table_entry {
 	char *text;
 	int type;
 	int datatype;
+	int qtd_parametros;
   	struct table_entry *next;
 } hash_entry;
 
