@@ -106,13 +106,13 @@ void check_operands(AST *node) {
             fprintf(stderr, "[LINE %d] Semantic Error: Left operand can not be logical.\n", node->line_number);
             exit(4);
         }
-        if (node->son[1]->type == AST_L ||
-            node->son[1]->type == AST_G ||
-            node->son[1]->type == AST_LE ||
-            node->son[1]->type == AST_GE ||
-            node->son[1]->type == AST_EQ ||
-            node->son[1]->type == AST_NE ||
-            node->son[1]->type == AST_OR ||
+        if (node->son[1]->type == AST_L   ||
+            node->son[1]->type == AST_G   ||
+            node->son[1]->type == AST_LE  ||
+            node->son[1]->type == AST_GE  ||
+            node->son[1]->type == AST_EQ  ||
+            node->son[1]->type == AST_NE  ||
+            node->son[1]->type == AST_OR  ||
             node->son[1]->type == AST_AND ||
             node->son[1]->type == AST_NOT) {
 
@@ -124,14 +124,18 @@ void check_operands(AST *node) {
 
 	if (node->type == AST_AND || node->type == AST_OR || node->type == AST_NOT) {
 
-		if(node->son[0]->type == AST_SOMA || node->son[0]->type == AST_SUB
-		   || node->son[0]->type == AST_DIV || node->son[0]->type == AST_MUL) {
+		if(node->son[0]->type == AST_SOMA ||
+           node->son[0]->type == AST_SUB  ||
+           node->son[0]->type == AST_DIV  ||
+           node->son[0]->type == AST_MUL) {
 			fprintf(stderr, "[LINE %d] Semantic Error: Left operand can not be arithmetic.\n", node->line_number);
 			exit(4);
 		}
 
-		if(node->son[1]->type == AST_SOMA || node->son[1]->type == AST_SUB
-		   || node->son[1]->type == AST_DIV || node->son[1]->type == AST_MUL) {
+		if(node->son[1]->type == AST_SOMA ||
+           node->son[1]->type == AST_SUB  ||
+           node->son[1]->type == AST_DIV  ||
+           node->son[1]->type == AST_MUL) {
 			fprintf(stderr, "[LINE %d] Semantic Error: Right operand can not be arithmetic.\n", node->line_number);
 			exit(4);
 		}
@@ -139,7 +143,6 @@ void check_operands(AST *node) {
 
 	for (i=0; i<MAX_SONS; ++i)
 		check_operands(node->son[i]);
-
 }
 
 
@@ -158,14 +161,30 @@ void check_usage(AST *node){
 
 			}
 			//Atribuicao para identificador escalar:
-			else{
-
-				if(node->symbol->type != SYMBOL_SCALAR){
-						fprintf(stderr,
-							"[LINE %d] ERRO: identificador %s deve ser escalar.\n",
-							node->line_number,node->symbol->text);
+			else {
+				if(node->symbol->type != SYMBOL_SCALAR) {
+						fprintf(stderr, "[LINE %d] ERRO: identificador %s deve ser escalar.\n", node->line_number,node->symbol->text);
 						exit(4);
 				}
+
+
+                if(node->son[0]->symbol != NULL)
+                {
+                    if(node->symbol->datatype == DATATYPE_INT && node->son[0]->symbol->datatype == DATATYPE_FLOAT)
+                    {
+                        fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to int.\n", node->line_number);
+                        exit(4);
+                    }
+
+                    if(node->symbol->datatype == DATATYPE_CHAR && node->son[0]->symbol->datatype == DATATYPE_FLOAT)
+                    {
+                        fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to char.\n", node->line_number);
+                        exit(4);
+                    }
+                }
+                break;
+
+
 
 				switch (node->son[0]->type) {
 					case AST_IDENT_DERREFERENCIA:
@@ -204,10 +223,6 @@ void check_usage(AST *node){
 						nodo_decl->son[1]->symbol->text = node_decl_pointer->son[1]->symbol->text;
 
 						printf("Novo valor do identificador: %s\n", nodo_decl->son[1]->symbol->text);
-
-
-
-
 
 				}
 
@@ -282,7 +297,6 @@ int conta_parametros(AST *node){
 	else{
 		return 1 + conta_parametros(node->son[1]);
 	}
-	return 0;
 }
 
 AST *procura_def_funcao(AST *node, char *nome)
