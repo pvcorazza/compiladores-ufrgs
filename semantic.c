@@ -14,6 +14,7 @@ void semantic_analisys (AST *node) {
 	nodo_raiz = node;
     set_declarations(node);
     check_undeclared(node);
+    check_operands(node);
 	check_usage(node);
 }
 
@@ -84,6 +85,43 @@ void check_undeclared(AST *node){
         exit(4);
     }
 }
+
+void check_operands(AST *node) {
+    int i;
+    if (!node) return;
+
+    if (node->type == AST_SOMA || node->type == AST_SUB || node->type == AST_MUL || node->type == AST_DIV ||
+        node->type == AST_L || node->type == AST_G || node->type == AST_LE || node->type == AST_GE || node->type == AST_EQ ||
+        node->type == AST_NE || node->type == AST_AND || node->type == AST_OR) {
+        if (node->son[0]->type == AST_L ||
+            node->son[0]->type == AST_G ||
+            node->son[0]->type == AST_LE ||
+            node->son[0]->type == AST_GE ||
+            node->son[0]->type == AST_EQ ||
+            node->son[0]->type == AST_NE ||
+            node->son[0]->type == AST_OR ||
+            node->son[0]->type == AST_AND ||
+            node->son[0]->type == AST_NOT) {
+
+            fprintf(stderr, "[LINE %d] Semantic Error: Left operand can not be logical.\n", node->line_number);
+            exit(4);
+        }
+        if (node->son[1]->type == AST_L ||
+            node->son[1]->type == AST_G ||
+            node->son[1]->type == AST_LE ||
+            node->son[1]->type == AST_GE ||
+            node->son[1]->type == AST_EQ ||
+            node->son[1]->type == AST_NE ||
+            node->son[1]->type == AST_OR ||
+            node->son[1]->type == AST_AND ||
+            node->son[1]->type == AST_NOT) {
+
+            fprintf(stderr, "[LINE %d] Semantic Error: Right operand can not be logical.\n", node->line_number);
+            exit(4);
+        }
+    }
+}
+
 
 void check_usage(AST *node){
 	int i;
