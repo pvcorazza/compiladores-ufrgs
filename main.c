@@ -20,8 +20,6 @@ int main(int argc, char **argv) {
         exit(2);
     }
 
-    output_file = fopen(argv[2], "w");
-
     initMe();
 
     yyparse();
@@ -29,7 +27,6 @@ int main(int argc, char **argv) {
 
     printf("\n --- Debug symbol table: ---\n");
     hash_print();
-    fclose(output_file);
     exit(0);
 
 }
