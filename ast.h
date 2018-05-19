@@ -61,6 +61,7 @@ typedef struct ast_node {
     int type;
     int line_number;
     hash_entry *symbol;
+	hash_entry *point_to_symbol;	//caso a AST for ponteiro, aqui guarda a hash pra onde o ponteiro aponta
     struct ast_node* son[MAX_SONS];
 } AST;
 

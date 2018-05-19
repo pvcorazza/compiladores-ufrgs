@@ -23,7 +23,8 @@ void set_declarations(AST *node) {
     if (!node) return;
 
     if (node->type == AST_DECL_GLOBAL || node->type == AST_VETOR_VAZIO ||
-		node->type == AST_VETOR_INIC || node->type == AST_DECL_PONTEIRO || node->type == AST_DEF_FUNCAO) {
+		node->type == AST_VETOR_INIC || node->type == AST_DECL_PONTEIRO ||
+		node->type == AST_DEF_FUNCAO) {
         if (node->symbol->type != SYMBOL_IDENTIFIER) {
             fprintf(stderr, "[LINE %d] Semantic Error: Symbol '%s' already declared.\n",  node->line_number, node->symbol->text);
             exit(4);
@@ -89,17 +90,27 @@ void check_usage(AST *node){
 
 	switch(node->type){
 		case AST_ATRIBUICAO:
-			if(node->symbol->type != SYMBOL_SCALAR)
-				{
-					fprintf(stderr, "ERRO: identificador deve ser escalar.\n");
-					exit(4);
-				}
+
+			if(node->symbol->type == SYMBOL_POINTER){
+				printf("%s\n","Atribuicao de ponteiro");
+				verifica_atribuicao_ponteiros(node);
+				printf("Aponta para id = %s\n",node->point_to_symbol->text);
+
+			}
+			else{
+				if(node->symbol->type != SYMBOL_SCALAR){
+						fprintf(stderr,
+							"[LINE %d] ERRO: identificador %s deve ser escalar.\n",
+							node->line_number,node->symbol->text);
+						exit(4);
+					}
+			}
 
 			break;
 
 		case AST_CHAMADA_FUNCAO:
 			if(node->symbol->type != SYMBOL_FUNCTION){
-					fprintf(stderr, "ERRO: identificador deve ser uma funcao.\n");
+					fprintf(stderr, "[LINE %d] ERRO: identificador deve ser uma funcao.\n",node->line_number);
 					exit(4);
 			}
 
@@ -148,6 +159,12 @@ void check_usage(AST *node){
 			*/
 
 			break;
+
+			case AST_DECL_PONTEIRO:
+				printf("Declaracao de ponteiro\n");
+				break;
+
+
 
 	}
 
@@ -209,5 +226,17 @@ void verifica_tipos_parametros_funcao(AST* nodecall)
 				nodecall = nodecall->son[1];
 				nodedef = nodedef->son[1];
 		}
+	}
+}
+
+void verifica_atribuicao_ponteiros(AST *node){
+	if(!node) return;
+	AST* nodedef;
+	switch (node->son[0]->type) {
+		case AST_IDENT_REFERENCIA:
+			printf("%s\n", "Referencia");
+			node->point_to_symbol = node->son[0]->symbol;
+
+			break;
 	}
 }
