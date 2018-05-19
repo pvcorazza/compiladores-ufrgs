@@ -120,6 +120,26 @@ void check_operands(AST *node) {
             exit(4);
         }
     }
+
+
+	if (node->type == AST_AND || node->type == AST_OR || node->type == AST_NOT) {
+
+		if(node->son[0]->type == AST_SOMA || node->son[0]->type == AST_SUB
+		   || node->son[0]->type == AST_DIV || node->son[0]->type == AST_MUL) {
+			fprintf(stderr, "[LINE %d] Semantic Error: Left operand can not be arithmetic.\n", node->line_number);
+			exit(4);
+		}
+
+		if(node->son[1]->type == AST_SOMA || node->son[1]->type == AST_SUB
+		   || node->son[1]->type == AST_DIV || node->son[1]->type == AST_MUL) {
+			fprintf(stderr, "[LINE %d] Semantic Error: Right operand can not be arithmetic.\n", node->line_number);
+			exit(4);
+		}
+	}
+
+	for (i=0; i<MAX_SONS; ++i)
+		check_operands(node->son[i]);
+
 }
 
 
