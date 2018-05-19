@@ -12,4 +12,5 @@ void set_declarations(AST *node);
 void check_undeclared (AST *node);
 void check_usage(AST *node);
 int conta_parametros(AST *node);
+AST *procura_def_funcao(AST *node, char *nome);
 #endif //TESTE_SEMANTIC_H
