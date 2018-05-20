@@ -9,7 +9,6 @@
 
 int error = 0;
 AST *nodo_raiz;
-
 void semantic_analisys (AST *node) {
 
 	//guarda a raiz recebida
@@ -48,9 +47,7 @@ void set_declarations(AST *node) {
                     break;
                 case AST_DECL_PONTEIRO: node->symbol->type = SYMBOL_POINTER;
                     break;
-                case AST_DEF_FUNCAO:
-					node->symbol->type = SYMBOL_FUNCTION;
-					node->symbol->qtd_parametros = conta_parametros(node->son[1]);
+                case AST_DEF_FUNCAO: node->symbol->type = SYMBOL_FUNCTION;
                     break;
                 default: break;
             }
@@ -83,20 +80,6 @@ void set_declarations(AST *node) {
 		}
 	}
 
-
-	if(node->type == AST_IDENT_DERREFERENCIA){
-		printf("AST_IDENT_DERREFERENCIA\n");
-
-		printf("Identificador %s\n",node->symbol->text);
-		AST *node_decl_pointer = procura_declaracao_ponteiro(nodo_raiz, node->symbol->text);
-		printf("Tipo do identificador declarado: %d\n",node->symbol->datatype);
-
-		//printf("Symbol type %d\n", node->son[0]->type);
-
-		//node->son[0]-
-
-		//exit(4);
-	}
 
     for (i = 0; i < MAX_SONS; ++i) {
         set_declarations(node->son[i]);
@@ -310,28 +293,16 @@ void check_usage(AST *node){
 					}
 				}
 
+				AST *node_decl_pointer;
 				switch (node->son[0]->type) {
 					case AST_IDENT_DERREFERENCIA:
-						printf("Derreferencia\n");
-
-						//Valor do identificador na hash deve receber o valor
-						//do conteudo do ponteiro
 
 						//procura declaracao do ponteiro
-						AST *node_decl_pointer = procura_declaracao_ponteiro(nodo_raiz, node->son[0]->symbol->text);
+						node_decl_pointer = procura_declaracao_ponteiro(nodo_raiz, node->son[0]->symbol->text);
 
 						//Procura a declaracao do identificador
 						AST *nodo_decl = procura_declaracao_global(nodo_raiz, node->symbol->text);
 
-
-						/*
-						if (node_decl_pointer->symbol->type == SYMBOL_POINTER) {
-							printf("Simbolo eh um ponteiro\n");
-							printf("DATATYPE = %d\n", node_decl_pointer->symbol->datatype);
-						}*/
-
-						//coloca o valor na entrada hash correspondente ao identificador
-						//node->symbol->text = node_decl_pointer->son[1]->symbol->text;
 
 						int tipo_identificador = nodo_decl->symbol->datatype;
 						int tipo_do_ponteiro = node_decl_pointer->symbol->datatype;
@@ -354,14 +325,12 @@ void check_usage(AST *node){
 							}
 						}*/
 
-						printf("Atribui ao identificador \"%s\" ", nodo_decl->symbol->text);
-						printf("cujo valor antigo é: %s ", nodo_decl->son[1]->symbol->text);
+						//printf("Atribui ao identificador \"%s\" ", nodo_decl->symbol->text);
+						//printf("cujo valor antigo é: %s ", nodo_decl->son[1]->symbol->text);
 						//Coloca novo valor na hash
 						nodo_decl->son[1]->symbol->text = node_decl_pointer->son[1]->symbol->text;
-						printf("o novo valor: %s ", nodo_decl->son[1]->symbol->text);
-						printf("que veio do ponteiro :\"%s\"\n", node_decl_pointer->symbol->text);
-
-
+						//printf("o novo valor: %s ", nodo_decl->son[1]->symbol->text);
+						//printf("que veio do ponteiro :\"%s\"\n", node_decl_pointer->symbol->text);
 
 						break;
 
@@ -377,50 +346,7 @@ void check_usage(AST *node){
 				error++;
 			}
 
-			int qtd_param_chamada = 0;
-			int qtd_param_def_funcao = node->symbol->qtd_parametros;
-
-			// conta quantos parametros a a funcao recebeu na sua chamada
-			qtd_param_chamada = conta_parametros(node->son[0]);
-
-			if (qtd_param_chamada != qtd_param_def_funcao) {
-				fprintf(stderr, "[LINE %d] ERRO: Quantidade de parametros diferentes na chamada da funcao.\n",
-						node->line_number);
-				error++;
-			}
-
-			if (qtd_param_chamada != 0) {
-
-				//ta dando segmentation fault
-
-				//verifica_tipos_parametros_funcao(node);
-			}
-
-			/*
-
-			// Agora verifica se os tipos dos parametros estao corretos com a definicao:
-			if(qtd_param_chamada !=0){
-
-				//procura a declaracao da funcao
-				AST * nodo_decl_funcao = procura_def_funcao(nodo_raiz,node->symbol->text);
-
-
-				for(int parametro=0; parametro < qtd_param_def_funcao;parametro++){
-
-					if(nodo_decl_funcao->son[0]->symbol->datatype != node->son[0]->symbol->datatype)
-					{
-						fprintf(stderr, "ERRO: Tipo de parametro incorreto\n");
-						error++;
-					}
-
-					//percorre a lista de parametros (descendo a arvore)
-					node = node->son[1];
-					nodo_decl_funcao = nodo_decl_funcao->son[1];
-				}
-
-			}
-
-			*/
+			verifica_tipos_parametros_funcao(node);
 
 			break;
 
@@ -490,13 +416,6 @@ void check_usage(AST *node){
 
 	for(i=0; i <MAX_SONS; ++i)
 		check_usage(node->son[i]);
-}
-
-int conta_parametros(AST *node){
-	if(!node) return 0;
-	else{
-		return 1 + conta_parametros(node->son[1]);
-	}
 }
 
 AST *procura_def_funcao(AST *node, char *nome)
@@ -569,45 +488,107 @@ AST *procura_declaracao_ponteiro(AST *node, char *nome)
 
 void verifica_tipos_parametros_funcao(AST* nodecall)
 {
+	int nodecall_line = nodecall->line_number;
+	int tipo_argumento_decl=0,tipo_argumento_call=0;
 	if(!nodecall) return;
 	AST* nodedef;
 	if(nodecall->symbol != NULL) nodedef = procura_def_funcao(nodo_raiz, nodecall->symbol->text);
 
-	if(nodecall->son[0] != NULL && nodedef->son[1] != NULL)
-	{
-		nodecall = nodecall->son[0];
-		nodedef = nodedef->son[1];
+	nodecall = nodecall->son[0];
+	while(nodedef != NULL){
 
-		while(nodecall != NULL && nodedef != NULL)
-		{
-			if(nodecall->son[0]->symbol != NULL && nodedef->son[0]->symbol != NULL)
-				{
-					if(nodecall->son[0]->symbol->datatype > nodedef->son[0]->symbol->datatype)
-					{
-						fprintf(stderr, "[LINE %d] ERRO: Tipo de parametro incorreto\n",nodecall->line_number);
-						error++;
-					}
+        if(nodecall == NULL){
+			fprintf(stderr, "[LINE %d] ERRO: Quantidade de parametros diferentes na chamada da funcao.\n",
+					nodecall_line);
+			exit(4);
+        }
+
+
+		if(nodedef->type == AST_PARAM_LIST){
+			//printf("Lista de parametros\n");
+
+
+			if(nodedef->son[0]->type == AST_PARAM){
+				//printf("Funcao com 1 parametro\n");
+                //printf("Node call: %d\n",nodecall->son[0]->symbol->datatype );
+				//printf("Node def : %d\n",nodedef->son[0]->symbol->datatype);
+
+				tipo_argumento_decl = nodedef->son[0]->symbol->datatype;
+
+                if(nodecall->son[0]->expression_datatype != NO_EXPRESSION){
+                    //printf("Eh uma expressao\n");
+                    //printf("Tipo da expressao %d\n",nodecall->son[0]->expression_datatype );
+					tipo_argumento_call = nodecall->son[0]->expression_datatype;
 				}
-				nodecall = nodecall->son[1];
-				nodedef = nodedef->son[1];
+                else{
+                    //printf("Arg call type %d\n", nodecall->son[0]->symbol->datatype);
+					tipo_argumento_call = nodecall->son[0]->symbol->datatype;
+
+                }
+
+
+
+                nodecall = nodecall->son[1]; //proximo argumento da chamada de funcao
+
+            }
+
+			if(nodedef->son[1]->type == AST_PARAM){
+                //printf("Ultimo paramentro\n");
+
+				//printf("nodecal type = %d\n",nodecall->symbol->datatype);
+				//printf("Node def : %d\n",nodedef->son[1]->symbol->datatype);
+
+				tipo_argumento_decl = nodedef->son[1]->symbol->datatype;
+
+
+				if(nodecall->type==AST_ARG_FUNCAO){
+					fprintf(stderr, "[LINE %d] ERRO: Quantidade de parametros na chamada da funcao é maior do que o declarado.\n",
+							nodecall_line);
+					exit(4);
+				}
+
+                if(nodecall->expression_datatype != NO_EXPRESSION){
+                    //printf("Eh uma expressao\n");
+                    //printf("Tipo da expressao %d\n",nodecall->expression_datatype );
+					tipo_argumento_call = nodecall->expression_datatype;
+
+				}
+                else{
+                    //printf("Arg call type %d\n", nodecall->symbol->datatype);
+					tipo_argumento_call = nodecall->symbol->datatype;
+
+
+				}
+
+
+			}
 		}
+
+
+
+		if(tipo_argumento_decl != tipo_argumento_call){
+			fprintf(stderr, "[LINE %d] ERRO: Tipos dos argumentos precisam ser iguais a declaracao da funcao.\n",
+					nodecall_line);
+			exit(4);
+		}
+
+
+		nodedef = nodedef->son[1]; //proximo parametro na declaracao da funcao
+
 	}
+
+
 }
 
 void verifica_atribuicao_ponteiros(AST *node){
 	if(!node) return;
-	AST* nodedef;
 	switch (node->son[0]->type) {
 		case AST_IDENT_REFERENCIA:
-			//printf("%s\n", "Referencia");
 			node->point_to_symbol = node->son[0]->symbol;
 			break;
 	}
 }
 
-void derreferencia(AST *node){
-
-}
 
 void check_return(AST* node, AST* function_node) {
     if(!node) return;
