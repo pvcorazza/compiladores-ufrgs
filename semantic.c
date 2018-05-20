@@ -118,10 +118,14 @@ void check_undeclared(AST *node){
 void set_expression_datatypes(AST *node) {
 	int i;
 	if (!node) return;
-	int expr1=-1;
-	int expr2=-1;
+	int expr1;
+	int expr2;
 	switch (node->type) {
 
+        case AST_EXP_PARENTESES:
+            set_expression_datatypes(node->son[0]);
+            node->expression_datatype = node->son[0]->expression_datatype;
+            break;
 		case AST_SOMA:
 		case AST_SUB:
 		case AST_MUL:
