@@ -150,40 +150,39 @@ void check_usage(AST *node){
 	int i;
     if (!node) return;
 
-	switch(node->type){
+	switch(node->type) {
 		case AST_ATRIBUICAO:
 
 			//Atribuicao para um identificador que eh ponteiro:
-			if(node->symbol->type == SYMBOL_POINTER){
+			if (node->symbol->type == SYMBOL_POINTER) {
 				//printf("%s\n","Atribuicao de ponteiro");
 				verifica_atribuicao_ponteiros(node);
 				//printf("Aponta para id = %s\n",node->point_to_symbol->text);
 
 			}
-			//Atribuicao para identificador escalar:
+				//Atribuicao para identificador escalar:
 			else {
-				if(node->symbol->type != SYMBOL_SCALAR) {
-						fprintf(stderr, "[LINE %d] ERRO: identificador %s deve ser escalar.\n", node->line_number,node->symbol->text);
-						exit(4);
+				if (node->symbol->type != SYMBOL_SCALAR) {
+					fprintf(stderr, "[LINE %d] ERRO: identificador %s deve ser escalar.\n", node->line_number,
+							node->symbol->text);
+					exit(4);
 				}
 
 
-                if(node->son[0]->symbol != NULL)
-                {
-                    if(node->symbol->datatype == DATATYPE_INT && node->son[0]->symbol->datatype == DATATYPE_FLOAT)
-                    {
-                        fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to int.\n", node->line_number);
-                        exit(4);
-                    }
+				if (node->son[0]->symbol != NULL) {
+					if (node->symbol->datatype == DATATYPE_INT && node->son[0]->symbol->datatype == DATATYPE_FLOAT) {
+						fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to int.\n",
+								node->line_number);
+						exit(4);
+					}
 
-                    if(node->symbol->datatype == DATATYPE_CHAR && node->son[0]->symbol->datatype == DATATYPE_FLOAT)
-                    {
-                        fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to char.\n", node->line_number);
-                        exit(4);
-                    }
-                }
-                break;
-
+					if (node->symbol->datatype == DATATYPE_CHAR && node->son[0]->symbol->datatype == DATATYPE_FLOAT) {
+						fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to char.\n",
+								node->line_number);
+						exit(4);
+					}
+				}
+				break;
 
 
 				switch (node->son[0]->type) {
@@ -195,26 +194,26 @@ void check_usage(AST *node){
 						//do conteudo do ponteiro
 
 						//procura declaracao do ponteiro
-						AST *node_decl_pointer = procura_declaracao_ponteiro(nodo_raiz,node->son[0]->symbol->text);
+						AST *node_decl_pointer = procura_declaracao_ponteiro(nodo_raiz, node->son[0]->symbol->text);
 
 						printf("Nodo declaracao ponteiro id :%s\n", node_decl_pointer->symbol->text);
 
 
-						if(node_decl_pointer->symbol->type == SYMBOL_POINTER){
+						if (node_decl_pointer->symbol->type == SYMBOL_POINTER) {
 
 							printf("Simbolo eh um ponteiro\n");
-							printf("DATATYPE = %d\n",node_decl_pointer->symbol->datatype);
+							printf("DATATYPE = %d\n", node_decl_pointer->symbol->datatype);
 						}
 
 
-						printf("Valor a ser atribuido %s\n",node_decl_pointer->son[1]->symbol->text);
+						printf("Valor a ser atribuido %s\n", node_decl_pointer->son[1]->symbol->text);
 
 						//coloca o valor na entrada hash correspondente ao identificador
 						//node->symbol->text = node_decl_pointer->son[1]->symbol->text;
 
 
 						//Procura a declaracao do identificador
-						AST * nodo_decl = procura_declaracao_global(nodo_raiz,node->symbol->text);
+						AST *nodo_decl = procura_declaracao_global(nodo_raiz, node->symbol->text);
 						printf("identificador: %s\n", nodo_decl->symbol->text);
 
 						printf("Valor antigo do identificador: %s\n", nodo_decl->son[1]->symbol->text);
@@ -231,9 +230,9 @@ void check_usage(AST *node){
 			break;
 
 		case AST_CHAMADA_FUNCAO:
-			if(node->symbol->type != SYMBOL_FUNCTION){
-					fprintf(stderr, "[LINE %d] ERRO: identificador deve ser uma funcao.\n",node->line_number);
-					exit(4);
+			if (node->symbol->type != SYMBOL_FUNCTION) {
+				fprintf(stderr, "[LINE %d] ERRO: identificador deve ser uma funcao.\n", node->line_number);
+				exit(4);
 			}
 
 			int qtd_param_chamada = 0;
@@ -242,12 +241,13 @@ void check_usage(AST *node){
 			// conta quantos parametros a a funcao recebeu na sua chamada
 			qtd_param_chamada = conta_parametros(node->son[0]);
 
-			if(qtd_param_chamada != qtd_param_def_funcao){
-				fprintf(stderr, "[LINE %d] ERRO: Quantidade de parametros diferentes na chamada da funcao.\n",node->line_number);
+			if (qtd_param_chamada != qtd_param_def_funcao) {
+				fprintf(stderr, "[LINE %d] ERRO: Quantidade de parametros diferentes na chamada da funcao.\n",
+						node->line_number);
 				exit(4);
 			}
 
-			if(qtd_param_chamada != 0 ){
+			if (qtd_param_chamada != 0) {
 
 				//ta dando segmentation fault
 
@@ -283,8 +283,39 @@ void check_usage(AST *node){
 			break;
 
 
+		case AST_VET:
+
+			//Se o indentificador não for vetor
+			if (node->symbol->type != SYMBOL_VECTOR) {
+				fprintf(stderr, "[LINE %d] Semantic Error: identifier must be a vector.\n", node->line_number);
+				exit(4);
+			}
+			if (node->son[0]->symbol != NULL) {
+				//Se o literal não for inteiro ou char
+				if ((node->son[0]->symbol->type == SYMBOL_LIT_STRING) ||
+					(node->son[0]->symbol->type == SYMBOL_LIT_REAL)) {
+					fprintf(stderr, "[LINE %d] Semantic Error: index must be an integer.\n", node->line_number);
+					exit(4);
+				}
+				//Se o identificador não for inteiro ou char
+				if ((node->son[0]->symbol->datatype == DATATYPE_FLOAT)) {
+					fprintf(stderr, "[LINE %d] Semantic Error: index must be an integer.\n", node->line_number);
+					exit(4);
+				}
+			}
+			//Se a expressão não retornar um inteiro ou char
+			if((node->son[0]->type != AST_SOMA) && (node->son[0]->type != AST_SUB)) {
+				fprintf(stderr, "[LINE %d] Semantic Error: index must be an integer.\n", node->line_number);
+				exit(4);
+
+				//Necessário verificar o tipo dos operandos...
 
 
+			}
+
+
+
+			break;
 
 	}
 
