@@ -44,7 +44,6 @@ void set_declarations(AST *node) {
                 case AST_VETOR_INIC: node->symbol->type = SYMBOL_VECTOR;
                     break;
                 case AST_DECL_PONTEIRO: node->symbol->type = SYMBOL_POINTER;
-					printf("%s\n", "Declaracao de ponteiro");
                     break;
                 case AST_DEF_FUNCAO:
 					node->symbol->type = SYMBOL_FUNCTION;
@@ -217,7 +216,6 @@ void check_usage(AST *node){
 				switch (node->son[0]->type) {
 					case AST_IDENT_DERREFERENCIA:
 						printf("Derreferencia\n");
-						printf("Pegar valor do ponteiro\n");
 
 						//Valor do identificador na hash deve receber o valor
 						//do conteudo do ponteiro
@@ -225,32 +223,47 @@ void check_usage(AST *node){
 						//procura declaracao do ponteiro
 						AST *node_decl_pointer = procura_declaracao_ponteiro(nodo_raiz, node->son[0]->symbol->text);
 
-						printf("Nodo declaracao ponteiro id :%s\n", node_decl_pointer->symbol->text);
+						//Procura a declaracao do identificador
+						AST *nodo_decl = procura_declaracao_global(nodo_raiz, node->symbol->text);
 
 
+						/*
 						if (node_decl_pointer->symbol->type == SYMBOL_POINTER) {
-
 							printf("Simbolo eh um ponteiro\n");
 							printf("DATATYPE = %d\n", node_decl_pointer->symbol->datatype);
-						}
-
-
-						printf("Valor a ser atribuido %s\n", node_decl_pointer->son[1]->symbol->text);
+						}*/
 
 						//coloca o valor na entrada hash correspondente ao identificador
 						//node->symbol->text = node_decl_pointer->son[1]->symbol->text;
 
+						int tipo_identificador = nodo_decl->symbol->datatype;
+						int tipo_do_ponteiro = node_decl_pointer->symbol->datatype;
 
-						//Procura a declaracao do identificador
-						AST *nodo_decl = procura_declaracao_global(nodo_raiz, node->symbol->text);
-						printf("identificador: %s\n", nodo_decl->symbol->text);
+						if (tipo_identificador == DATATYPE_INT && tipo_do_ponteiro == DATATYPE_FLOAT) {
+							fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to int.\n",
+									node->line_number);
+							exit(4);
+						}
 
-						printf("Valor antigo do identificador: %s\n", nodo_decl->son[1]->symbol->text);
+						if (tipo_identificador == DATATYPE_CHAR && tipo_do_ponteiro== DATATYPE_FLOAT) {
+							fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to char.\n",
+									node->line_number);
+							exit(4);
+						}
 
+						//printf("Tipo declarado do ponteiro: %d\n",tipo_do_ponteiro);
+						//printf("Tipo declarado do identificador: %d\n",tipo_identificador);
+
+						printf("Atribui ao identificador \"%s\" ", nodo_decl->symbol->text);
+						printf("cujo valor antigo é: %s ", nodo_decl->son[1]->symbol->text);
 						//Coloca novo valor na hash
 						nodo_decl->son[1]->symbol->text = node_decl_pointer->son[1]->symbol->text;
+						printf("o novo valor: %s ", nodo_decl->son[1]->symbol->text);
+						printf("que veio do ponteiro :\"%s\"\n", node_decl_pointer->symbol->text);
 
-						printf("Novo valor do identificador: %s\n", nodo_decl->son[1]->symbol->text);
+
+
+						break;
 
 				}
 
@@ -439,12 +452,8 @@ AST *procura_declaracao_ponteiro(AST *node, char *nome)
 
 	if(node->type == AST_DECL_PONTEIRO)
 		if(node->symbol != NULL){
-			if(strcmp(node->symbol->text, nome) == 0){
-				//printf("Achou id %s\n",nome );
-				printf("Achou declaracao de ponteiro\n");
+			if(strcmp(node->symbol->text, nome) == 0)
 				return node;
-
-			}
 		}
 
 
