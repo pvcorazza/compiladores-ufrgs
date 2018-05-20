@@ -261,7 +261,11 @@ void check_usage(AST *node){
         case AST_DEF_FUNCAO:
 			check_return(node->son[2], node);
             if (node->symbol->datatype != node->return_datatype) {
-				fprintf(stderr, "[LINE %d] Semantic Error: return has incompatible type or has not defined.\n", node->line_number);
+				if (node->return_datatype !=0) {
+					fprintf(stderr, "[LINE %d] Semantic Error: return has incompatible type.\n", node->line_number);
+				} else {
+					fprintf(stderr, "[LINE %d] Semantic Error: return for the function %s() has not declared.\n", node->line_number, node->symbol->text);
+				}
 				error++;
 			}
 			break;
