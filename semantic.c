@@ -80,7 +80,7 @@ void set_declarations(AST *node) {
 		}
 	}
 
-	
+
     for (i = 0; i < MAX_SONS; ++i) {
         set_declarations(node->son[i]);
     }
@@ -102,10 +102,14 @@ void check_undeclared(AST *node){
 void set_expression_datatypes(AST *node) {
 	int i;
 	if (!node) return;
-	int expr1=-1;
-	int expr2=-1;
+	int expr1;
+	int expr2;
 	switch (node->type) {
 
+        case AST_EXP_PARENTESES:
+            set_expression_datatypes(node->son[0]);
+            node->expression_datatype = node->son[0]->expression_datatype;
+            break;
 		case AST_SOMA:
 		case AST_SUB:
 		case AST_MUL:
@@ -233,6 +237,7 @@ void check_operands(AST *node) {
 
 void check_usage(AST *node){
 	int i;
+	int return_type;
     if (!node) return;
 
 	switch(node->type) {
@@ -251,6 +256,18 @@ void check_usage(AST *node){
 			}
 			break;
 
+        case AST_DEF_FUNCAO:
+
+			return_type = check_return(node->son[2]);
+            if (node->symbol->datatype != return_type) {
+				if (return_type == 0) {
+					fprintf(stderr, "[LINE %d] Semantic Error: return of function not defined.\n", node->line_number);
+				} else {
+					fprintf(stderr, "[LINE %d] Semantic Error: return has incompatible type.\n", node->line_number);
+				}
+				error++;
+			}
+			break;
 		case AST_ATRIBUICAO:
 			//Atribuicao para um identificador que eh ponteiro:
 			if (node->symbol->type == SYMBOL_POINTER) {
@@ -411,7 +428,6 @@ void check_usage(AST *node){
 		check_usage(node->son[i]);
 }
 
-
 AST *procura_def_funcao(AST *node, char *nome)
 {
 	int i;
@@ -487,7 +503,6 @@ void verifica_tipos_parametros_funcao(AST* nodecall)
 	if(!nodecall) return;
 	AST* nodedef;
 	if(nodecall->symbol != NULL) nodedef = procura_def_funcao(nodo_raiz, nodecall->symbol->text);
-
 
 	nodecall = nodecall->son[0];
 	while(nodedef != NULL){
@@ -584,3 +599,26 @@ void verifica_atribuicao_ponteiros(AST *node){
 	}
 }
 
+
+int check_return(AST* node) {
+    if(!node) return 0;
+
+    if(node->type == AST_RETURN) {
+		return check_datatype(node);
+    }
+    for(int i=0; i<MAX_SONS; i++) {
+        return check_return(node->son[i]);
+    }
+}
+
+int check_datatype(AST* node) {
+
+	if (node->son[0]->symbol != NULL) {
+		return node->son[0]->symbol->datatype;
+	}
+
+	if (node->son[0]->expression_datatype != NO_EXPRESSION) {
+		return node->son[0]->expression_datatype;
+	}
+	return NO_EXPRESSION;
+}
