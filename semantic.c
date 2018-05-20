@@ -7,6 +7,7 @@
 #include <string.h>
 #include "semantic.h"
 
+int error = 0;
 AST *nodo_raiz;
 void semantic_analisys (AST *node) {
 
@@ -16,6 +17,10 @@ void semantic_analisys (AST *node) {
     check_undeclared(node);
     check_operands(node);
 	check_usage(node);
+	if (error > 0) {
+        fprintf(stderr, "Compilation failed!\n");
+		exit(4);
+	}
 }
 
 
@@ -23,12 +28,13 @@ void set_declarations(AST *node) {
     int i;
     if (!node) return;
 
+    //Verifica declarações globais
     if (node->type == AST_DECL_GLOBAL || node->type == AST_VETOR_VAZIO ||
 		node->type == AST_VETOR_INIC || node->type == AST_DECL_PONTEIRO ||
 		node->type == AST_DEF_FUNCAO) {
         if (node->symbol->type != SYMBOL_IDENTIFIER) {
             fprintf(stderr, "[LINE %d] Semantic Error: Symbol '%s' already declared.\n",  node->line_number, node->symbol->text);
-            exit(4);
+            error++;
         } else {
             switch (node->type) {
                 case AST_DECL_GLOBAL: node->symbol->type = SYMBOL_SCALAR;
@@ -63,7 +69,7 @@ void set_declarations(AST *node) {
 	if(node->type == AST_PARAM){
 		if (node->symbol->type != SYMBOL_IDENTIFIER) {
             fprintf(stderr, "[LINE %d] Semantic Error: Symbol '%s' already declared.\n",  node->line_number, node->symbol->text);
-            exit(4);
+            error++;
         }
 		else{
 
@@ -80,6 +86,7 @@ void set_declarations(AST *node) {
     }
 }
 
+//Verifica se simbolos ainda não foram declarados
 void check_undeclared(AST *node){
     if(!node) return;
     for (int i=0; i<MAX_SONS; i++) {
@@ -88,7 +95,7 @@ void check_undeclared(AST *node){
 
     if(node->symbol != 0 && node->symbol->type == SYMBOL_IDENTIFIER){
         fprintf(stderr, "[LINE %d] Semantic Error: Symbol '%s' is not declared.\n",  node->line_number, node->symbol->text);
-        exit(4);
+        error++;
     }
 }
 
@@ -110,7 +117,7 @@ void check_operands(AST *node) {
             node->son[0]->type == AST_NOT) {
 
             fprintf(stderr, "[LINE %d] Semantic Error: Left operand can not be logical.\n", node->line_number);
-            exit(4);
+            error++;
         }
         if (node->son[1]->type == AST_L   ||
             node->son[1]->type == AST_G   ||
@@ -123,7 +130,7 @@ void check_operands(AST *node) {
             node->son[1]->type == AST_NOT) {
 
             fprintf(stderr, "[LINE %d] Semantic Error: Right operand can not be logical.\n", node->line_number);
-            exit(4);
+            error++;
         }
     }
 
@@ -135,7 +142,7 @@ void check_operands(AST *node) {
            node->son[0]->type == AST_DIV  ||
            node->son[0]->type == AST_MUL) {
 			fprintf(stderr, "[LINE %d] Semantic Error: Left operand can not be arithmetic.\n", node->line_number);
-			exit(4);
+			error++;
 		}
 
 		if(node->son[1]->type == AST_SOMA ||
@@ -143,7 +150,7 @@ void check_operands(AST *node) {
            node->son[1]->type == AST_DIV  ||
            node->son[1]->type == AST_MUL) {
 			fprintf(stderr, "[LINE %d] Semantic Error: Right operand can not be arithmetic.\n", node->line_number);
-			exit(4);
+			error++;
 		}
 	}
 
@@ -165,13 +172,13 @@ void check_usage(AST *node){
 				if (node->symbol->datatype == DATATYPE_INT && node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
 					fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to int.\n",
 							node->line_number);
-					exit(4);
+					error++;
 				}
 
 				if (node->symbol->datatype == DATATYPE_CHAR && node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
 					fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to char.\n",
 							node->line_number);
-					exit(4);
+					error++;
 				}
 			}
 			break;
@@ -189,7 +196,7 @@ void check_usage(AST *node){
 				if (node->symbol->type != SYMBOL_SCALAR) {
 					fprintf(stderr, "[LINE %d] ERRO: identificador %s deve ser escalar.\n", node->line_number,
 							node->symbol->text);
-					exit(4);
+					error++;
 				}
 
 				if (node->son[0]->symbol != NULL) {
@@ -197,13 +204,13 @@ void check_usage(AST *node){
 					if (node->symbol->datatype == DATATYPE_INT && node->son[0]->symbol->datatype == DATATYPE_FLOAT) {
 						fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to int.\n",
 								node->line_number);
-						exit(4);
+						error++;
 					}
 
 					if (node->symbol->datatype == DATATYPE_CHAR && node->son[0]->symbol->datatype == DATATYPE_FLOAT) {
 						fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to char.\n",
 								node->line_number);
-						exit(4);
+						error++;
 					}
 				}
 
@@ -254,7 +261,7 @@ void check_usage(AST *node){
 		case AST_CHAMADA_FUNCAO:
 			if (node->symbol->type != SYMBOL_FUNCTION) {
 				fprintf(stderr, "[LINE %d] ERRO: identificador deve ser uma funcao.\n", node->line_number);
-				exit(4);
+				error++;
 			}
 
 			int qtd_param_chamada = 0;
@@ -266,7 +273,7 @@ void check_usage(AST *node){
 			if (qtd_param_chamada != qtd_param_def_funcao) {
 				fprintf(stderr, "[LINE %d] ERRO: Quantidade de parametros diferentes na chamada da funcao.\n",
 						node->line_number);
-				exit(4);
+				error++;
 			}
 
 			if (qtd_param_chamada != 0) {
@@ -290,7 +297,7 @@ void check_usage(AST *node){
 					if(nodo_decl_funcao->son[0]->symbol->datatype != node->son[0]->symbol->datatype)
 					{
 						fprintf(stderr, "ERRO: Tipo de parametro incorreto\n");
-						exit(4);
+						error++;
 					}
 
 					//percorre a lista de parametros (descendo a arvore)
@@ -309,13 +316,13 @@ void check_usage(AST *node){
 				if (node->symbol->datatype == DATATYPE_INT && node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
 					fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to int.\n",
 							node->line_number);
-					exit(4);
+					error++;
 				}
 
 				if (node->symbol->datatype == DATATYPE_CHAR && node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
 					fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to char.\n",
 							node->line_number);
-					exit(4);
+					error++;
 				}
 			}
 		case AST_VET: //Expressão
@@ -323,19 +330,19 @@ void check_usage(AST *node){
 			//Se o indentificador não for vetor
 			if (node->symbol->type != SYMBOL_VECTOR) {
 				fprintf(stderr, "[LINE %d] Semantic Error: identifier must be a vector.\n", node->line_number);
-				exit(4);
+				error++;
 			}
 			if (node->son[0]->symbol != NULL) {
 				//Se o literal não for inteiro ou char
 				if ((node->son[0]->symbol->type == SYMBOL_LIT_STRING) ||
 					(node->son[0]->symbol->type == SYMBOL_LIT_REAL)) {
 					fprintf(stderr, "[LINE %d] Semantic Error: index must be an integer.\n", node->line_number);
-					exit(4);
+					error++;
 				}
 				//Se o identificador não for inteiro ou char
 				if ((node->son[0]->symbol->datatype == DATATYPE_FLOAT)) {
 					fprintf(stderr, "[LINE %d] Semantic Error: index must be an integer.\n", node->line_number);
-					exit(4);
+					error++;
 				}
 			}
 
@@ -345,7 +352,7 @@ void check_usage(AST *node){
                 //Se a expressão não retornar um inteiro ou char
                 if ((node->son[0]->type != AST_SOMA) && (node->son[0]->type != AST_SUB)) {
                     fprintf(stderr, "[LINE %d] Semantic Error: index must be an integer.\n", node->line_number);
-                    exit(4);
+                    error++;
 
                     //Necessário verificar o tipo dos operandos...
 
@@ -354,6 +361,16 @@ void check_usage(AST *node){
             }
 
 			break;
+
+        case AST_PRINT:
+            if(node->son[0]->symbol != NULL) {
+                if(node->son[0]->symbol->type != SYMBOL_LIT_STRING) {
+                    fprintf(stderr, "[LINE %d] Semantic Error: only strings are accepted in print command.\n", node->line_number);
+                    error++;
+                }
+            }
+            break;
+
 
 	}
 
@@ -458,7 +475,7 @@ void verifica_tipos_parametros_funcao(AST* nodecall)
 					if(nodecall->son[0]->symbol->datatype > nodedef->son[0]->symbol->datatype)
 					{
 						fprintf(stderr, "[LINE %d] ERRO: Tipo de parametro incorreto\n",nodecall->line_number);
-						exit(4);
+						error++;
 					}
 				}
 				nodecall = nodecall->son[1];
