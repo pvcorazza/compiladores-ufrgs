@@ -125,10 +125,14 @@ void set_expression_datatypes(AST *node) {
 
 			if (node->son[0]->symbol != NULL) {
 
-				if(node->son[0]->type == AST_IDENT_DERREFERENCIA)
-					expr1 = node->son[0]->symbol->datatype; //pega o tipo do ponteiro
-				else
-					expr1 = node->son[0]->symbol->type;
+                if ((node->son[0]->symbol->datatype == DATATYPE_INT) || (node->son[0]->symbol->datatype == DATATYPE_FLOAT) || (node->son[0]->symbol->datatype == DATATYPE_CHAR)) {
+                    expr1 = node->son[0]->symbol->datatype;
+                } else {
+                    if (node->son[0]->type == AST_IDENT_DERREFERENCIA)
+                        expr1 = node->son[0]->symbol->datatype; //pega o tipo do ponteiro
+                    else
+                        expr1 = node->son[0]->symbol->type;
+                }
 				//printf("Expr1 %d\n", expr1);
 			} else {
 				set_expression_datatypes(node->son[0]);
@@ -136,10 +140,15 @@ void set_expression_datatypes(AST *node) {
 			}
 
 			if (node->son[1]->symbol != NULL) {
-				if(node->son[1]->type == AST_IDENT_DERREFERENCIA)
-					expr2 = node->son[1]->symbol->datatype; //pega o tipo do ponteiro
-				else
-					expr2 = node->son[1]->symbol->type;
+
+                if ((node->son[1]->symbol->datatype != DATATYPE_INT) || (node->son[1]->symbol->datatype != DATATYPE_FLOAT) ||(node->son[1]->symbol->datatype != DATATYPE_CHAR)) {
+                    expr2 = node->son[1]->symbol->datatype;
+                } else {
+                    if (node->son[1]->type == AST_IDENT_DERREFERENCIA)
+                        expr2 = node->son[1]->symbol->datatype; //pega o tipo do ponteiro
+                    else
+                        expr2 = node->son[1]->symbol->type;
+                }
 				//printf("Expr2 %d\n", expr2);
 			} else {
 				set_expression_datatypes(node->son[1]);
@@ -231,7 +240,6 @@ void check_operands(AST *node) {
 
 void check_usage(AST *node){
 	int i;
-	int return_type;
     if (!node) return;
 
 	switch(node->type) {
@@ -251,10 +259,9 @@ void check_usage(AST *node){
 			break;
 
         case AST_DEF_FUNCAO:
-
 			check_return(node->son[2], node);
             if (node->symbol->datatype != node->return_datatype) {
-				fprintf(stderr, "[LINE %d] Semantic Error: return has incompatible type.\n", node->line_number);
+				fprintf(stderr, "[LINE %d] Semantic Error: return has incompatible type or has not defined.\n", node->line_number);
 				error++;
 			}
 			break;
@@ -593,7 +600,9 @@ void verifica_atribuicao_ponteiros(AST *node){
 void check_return(AST* node, AST* function_node) {
     if(!node) return;
     if(node->type == AST_RETURN) {
-		function_node->return_datatype = check_datatype(node);
+
+        int type = check_datatype(node);
+		function_node->return_datatype = type;
     }
 
     for(int i=0; i<MAX_SONS; i++) {
