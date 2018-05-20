@@ -102,7 +102,8 @@ void check_undeclared(AST *node){
 void set_expression_datatypes(AST *node) {
 	int i;
 	if (!node) return;
-
+	int expr1=-1;
+	int expr2=-1;
 	switch (node->type) {
 
 		case AST_SOMA:
@@ -119,23 +120,35 @@ void set_expression_datatypes(AST *node) {
 		case AST_L:
 		case AST_NOT:
 
+			if (node->son[0]->symbol != NULL) {
+				expr1 = node->son[0]->symbol->type;
+			} else {
+				set_expression_datatypes(node->son[0]);
+				expr1 = node->son[0]->expression_datatype;
+			}
 
-			if (node->son[0]->symbol != NULL && node->son[1]->symbol != NULL) {
-				if ((node->son[0]->symbol->type == SYMBOL_LIT_REAL) ||
-					(node->son[1]->symbol->type == SYMBOL_LIT_REAL)) {
+			if (node->son[1]->symbol != NULL) {
+				expr2 = node->son[1]->symbol->type;
+			} else {
+				set_expression_datatypes(node->son[1]);
+				expr2 = node->son[1]->expression_datatype;
+			}
+
+
+			if (expr1 >= 0 && expr2 >= 0) {
+				if ((expr1 == SYMBOL_LIT_REAL) || (expr2 == SYMBOL_LIT_REAL) || (expr1 == DATATYPE_FLOAT) || (expr2 == DATATYPE_FLOAT)) {
 					node->expression_datatype = DATATYPE_FLOAT;
 				} else {
-					if ((node->son[0]->symbol->type == SYMBOL_LIT_INT) ||
-						(node->son[1]->symbol->type == SYMBOL_LIT_INT)) {
+					if ((expr1 == SYMBOL_LIT_INT) || (expr2 == SYMBOL_LIT_INT) || (expr1 == DATATYPE_INT) || (expr2 == DATATYPE_INT)) {
 						node->expression_datatype = DATATYPE_INT;
 					} else {
-						if ((node->son[0]->symbol->type == SYMBOL_LIT_CHAR) ||
-							(node->son[1]->symbol->type == SYMBOL_LIT_CHAR)) {
+						if ((expr1 == SYMBOL_LIT_CHAR) || (expr2 == SYMBOL_LIT_CHAR)) {
 							node->expression_datatype = DATATYPE_INT;
 						}
 					}
 				}
 			}
+
 			break;
 
 		default:
