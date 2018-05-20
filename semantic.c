@@ -109,7 +109,6 @@ void check_undeclared(AST *node){
     for (int i=0; i<MAX_SONS; i++) {
         check_undeclared(node->son[i]);
     }
-
     if(node->symbol != 0 && node->symbol->type == SYMBOL_IDENTIFIER){
         fprintf(stderr, "[LINE %d] Semantic Error: Symbol '%s' is not declared.\n",  node->line_number, node->symbol->text);
         error++;
@@ -182,15 +181,10 @@ void set_expression_datatypes(AST *node) {
 
 		default:
 			node->expression_datatype = NO_EXPRESSION;
-
 	}
-
 	for (i=0; i<MAX_SONS; ++i)
 		set_expression_datatypes(node->son[i]);
 }
-
-
-
 
 void check_operands(AST *node) {
     int i;
@@ -275,13 +269,9 @@ void check_usage(AST *node){
 
         case AST_DEF_FUNCAO:
 
-			return_type = check_return(node->son[2]);
-            if (node->symbol->datatype != return_type) {
-				if (return_type == 0) {
-					fprintf(stderr, "[LINE %d] Semantic Error: return of function not defined.\n", node->line_number);
-				} else {
-					fprintf(stderr, "[LINE %d] Semantic Error: return has incompatible type.\n", node->line_number);
-				}
+			check_return(node->son[2], node);
+            if (node->symbol->datatype != node->return_datatype) {
+				fprintf(stderr, "[LINE %d] Semantic Error: return has incompatible type.\n", node->line_number);
 				error++;
 			}
 			break;
@@ -619,14 +609,14 @@ void derreferencia(AST *node){
 
 }
 
-int check_return(AST* node) {
-    if(!node) return 0;
-
+void check_return(AST* node, AST* function_node) {
+    if(!node) return;
     if(node->type == AST_RETURN) {
-		return check_datatype(node);
+		function_node->return_datatype = check_datatype(node);
     }
+
     for(int i=0; i<MAX_SONS; i++) {
-        return check_return(node->son[i]);
+        check_return(node->son[i], function_node);
     }
 }
 
