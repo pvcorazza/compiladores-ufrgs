@@ -502,10 +502,13 @@ void verifica_tipos_parametros_funcao(AST* nodecall)
 			exit(4);
         }
 
-
 		if(nodedef->type == AST_PARAM_LIST){
 			//printf("Lista de parametros\n");
 
+			if(nodecall->son[0] == NULL){
+				fprintf(stderr, "[LINE %d] Semantic Error: Declaration and call funtions must have the same quantity of parameters\n",nodecall_line);
+				exit(4);
+			}
 
 			if(nodedef->son[0]->type == AST_PARAM){
 				//printf("Funcao com 1 parametro\n");
@@ -536,7 +539,6 @@ void verifica_tipos_parametros_funcao(AST* nodecall)
 
 				//printf("nodecal type = %d\n",nodecall->symbol->datatype);
 				//printf("Node def : %d\n",nodedef->son[1]->symbol->datatype);
-
 
 
 				if(nodecall->type==AST_ARG_FUNCAO){
