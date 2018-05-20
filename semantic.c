@@ -206,8 +206,6 @@ void check_usage(AST *node){
 						exit(4);
 					}
 				}
-				break;
-
 
 				switch (node->son[0]->type) {
 					case AST_IDENT_DERREFERENCIA:
@@ -343,6 +341,7 @@ void check_usage(AST *node){
 
             if (node->son[0]->type != AST_SYMBOL) {
 
+				printf("TYPE: %d\n", node->son[0]->type);
                 //Se a expressão não retornar um inteiro ou char
                 if ((node->son[0]->type != AST_SOMA) && (node->son[0]->type != AST_SUB)) {
                     fprintf(stderr, "[LINE %d] Semantic Error: index must be an integer.\n", node->line_number);
