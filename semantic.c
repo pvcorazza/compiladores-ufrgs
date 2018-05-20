@@ -283,6 +283,19 @@ void check_usage(AST *node){
 			break;
 
         case AST_ATRIBUICAO_VETOR: //Atribuição
+			if (node->son[1]->symbol != NULL) {
+				if (node->symbol->datatype == DATATYPE_INT && node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
+					fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to int.\n",
+							node->line_number);
+					exit(4);
+				}
+
+				if (node->symbol->datatype == DATATYPE_CHAR && node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
+					fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to char.\n",
+							node->line_number);
+					exit(4);
+				}
+			}
 		case AST_VET: //Expressão
 
 			//Se o indentificador não for vetor
@@ -304,7 +317,9 @@ void check_usage(AST *node){
 				}
 			}
 
-            if (node->symbol->type != AST_SYMBOL) {
+            if (node->son[0]->type != AST_SYMBOL) {
+
+				printf("TIPE: %d\n", node->son[0]->type);
                 //Se a expressão não retornar um inteiro ou char
                 if ((node->son[0]->type != AST_SOMA) && (node->son[0]->type != AST_SUB)) {
                     fprintf(stderr, "[LINE %d] Semantic Error: index must be an integer.\n", node->line_number);
@@ -315,9 +330,7 @@ void check_usage(AST *node){
 
                 }
             }
-
-
-
+			
 			break;
 
 	}
