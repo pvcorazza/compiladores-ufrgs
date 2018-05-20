@@ -26,6 +26,7 @@ void semantic_analisys (AST *node) {
 
 
 void set_declarations(AST *node) {
+
     int i;
     if (!node) return;
 
@@ -81,6 +82,21 @@ void set_declarations(AST *node) {
 		}
 	}
 
+
+	if(node->type == AST_IDENT_DERREFERENCIA){
+		printf("AST_IDENT_DERREFERENCIA\n");
+
+		printf("Identificador %s\n",node->symbol->text);
+		AST *node_decl_pointer = procura_declaracao_ponteiro(nodo_raiz, node->symbol->text);
+		printf("Tipo do identificador declarado: %d\n",node->symbol->datatype);
+
+		//printf("Symbol type %d\n", node->son[0]->type);
+
+		//node->son[0]-
+
+		//exit(4);
+	}
+
     for (i = 0; i < MAX_SONS; ++i) {
         set_declarations(node->son[i]);
     }
@@ -121,19 +137,27 @@ void set_expression_datatypes(AST *node) {
 		case AST_NOT:
 
 			if (node->son[0]->symbol != NULL) {
-				expr1 = node->son[0]->symbol->type;
+
+				if(node->son[0]->type == AST_IDENT_DERREFERENCIA)
+					expr1 = node->son[0]->symbol->datatype; //pega o tipo do ponteiro
+				else
+					expr1 = node->son[0]->symbol->type;
+				//printf("Expr1 %d\n", expr1);
 			} else {
 				set_expression_datatypes(node->son[0]);
 				expr1 = node->son[0]->expression_datatype;
 			}
 
 			if (node->son[1]->symbol != NULL) {
-				expr2 = node->son[1]->symbol->type;
+				if(node->son[1]->type == AST_IDENT_DERREFERENCIA)
+					expr2 = node->son[1]->symbol->datatype; //pega o tipo do ponteiro
+				else
+					expr2 = node->son[1]->symbol->type;
+				//printf("Expr2 %d\n", expr2);
 			} else {
 				set_expression_datatypes(node->son[1]);
 				expr2 = node->son[1]->expression_datatype;
 			}
-
 
 			if (expr1 >= 0 && expr2 >= 0) {
 				if ((expr1 == SYMBOL_LIT_REAL) || (expr2 == SYMBOL_LIT_REAL) || (expr1 == DATATYPE_FLOAT) || (expr2 == DATATYPE_FLOAT)) {
@@ -153,6 +177,7 @@ void set_expression_datatypes(AST *node) {
 
 		default:
 			node->expression_datatype = NO_EXPRESSION;
+
 	}
 
 	for (i=0; i<MAX_SONS; ++i)
@@ -311,6 +336,7 @@ void check_usage(AST *node){
                             }
                         }
 
+						/*
 						if (tipo_identificador != NO_EXPRESSION) {
 
 							if (tipo_identificador != node_decl_pointer->expression_datatype) {
@@ -318,10 +344,7 @@ void check_usage(AST *node){
 										node->line_number);
 								error++;
 							}
-						}
-
-						//printf("Tipo declarado do ponteiro: %d\n",tipo_do_ponteiro);
-						//printf("Tipo declarado do identificador: %d\n",tipo_identificador);
+						}*/
 
 						printf("Atribui ao identificador \"%s\" ", nodo_decl->symbol->text);
 						printf("cujo valor antigo é: %s ", nodo_decl->son[1]->symbol->text);
