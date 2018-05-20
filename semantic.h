@@ -9,6 +9,7 @@
 
 void semantic_analisys (AST *node);
 void set_declarations(AST *node);
+void set_expression_datatypes(AST *node);
 void check_undeclared (AST *node);
 void check_operands(AST *node);
 void check_usage(AST *node);

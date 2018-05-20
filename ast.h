@@ -55,11 +55,14 @@
 #define AST_LISTA_INIC 243
 #define AST_CHAMADA_FUNCAO 244
 
+#define NO_EXPRESSION 900
+
 FILE *output_file;
 
 typedef struct ast_node {
     int type;
     int line_number;
+	int expression_datatype;
     hash_entry *symbol;
 	hash_entry *point_to_symbol;	//caso a AST for ponteiro, aqui guarda a hash pra onde o ponteiro aponta
     struct ast_node* son[MAX_SONS];
