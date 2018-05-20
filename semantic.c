@@ -282,8 +282,8 @@ void check_usage(AST *node){
 
 			break;
 
-
-		case AST_VET:
+        case AST_ATRIBUICAO_VETOR: //Atribuição
+		case AST_VET: //Expressão
 
 			//Se o indentificador não for vetor
 			if (node->symbol->type != SYMBOL_VECTOR) {
@@ -303,15 +303,18 @@ void check_usage(AST *node){
 					exit(4);
 				}
 			}
-			//Se a expressão não retornar um inteiro ou char
-			if((node->son[0]->type != AST_SOMA) && (node->son[0]->type != AST_SUB)) {
-				fprintf(stderr, "[LINE %d] Semantic Error: index must be an integer.\n", node->line_number);
-				exit(4);
 
-				//Necessário verificar o tipo dos operandos...
+            if (node->symbol->type != AST_SYMBOL) {
+                //Se a expressão não retornar um inteiro ou char
+                if ((node->son[0]->type != AST_SOMA) && (node->son[0]->type != AST_SUB)) {
+                    fprintf(stderr, "[LINE %d] Semantic Error: index must be an integer.\n", node->line_number);
+                    exit(4);
+
+                    //Necessário verificar o tipo dos operandos...
 
 
-			}
+                }
+            }
 
 
 
