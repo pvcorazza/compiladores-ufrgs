@@ -276,7 +276,7 @@ void check_usage(AST *node){
 				//Atribuicao para identificador escalar:
 			else {
 				if (node->symbol->type != SYMBOL_SCALAR) {
-					fprintf(stderr, "[LINE %d] ERRO: identificador %s deve ser escalar.\n", node->line_number,
+					fprintf(stderr, "[LINE %d] Semantic Error: id %s must be a scalar.\n", node->line_number,
 							node->symbol->text);
 					error++;
 				}
@@ -349,7 +349,7 @@ void check_usage(AST *node){
 
 		case AST_CHAMADA_FUNCAO:
 			if (node->symbol->type != SYMBOL_FUNCTION) {
-				fprintf(stderr, "[LINE %d] ERRO: identificador deve ser uma funcao.\n", node->line_number);
+				fprintf(stderr, "[LINE %d] Semantic Error: id must be a function.\n", node->line_number);
 				error++;
 			}
 
@@ -505,15 +505,17 @@ void verifica_tipos_parametros_funcao(AST* nodecall)
 	while(nodedef != NULL){
 
         if(nodecall == NULL){
-			fprintf(stderr, "[LINE %d] ERRO: Quantidade de parametros diferentes na chamada da funcao.\n",
-					nodecall_line);
+			fprintf(stderr, "[LINE %d] Semantic Error: Declaration and call funtions must have the same quantity of parameters\n",nodecall_line);
 			exit(4);
         }
-
 
 		if(nodedef->type == AST_PARAM_LIST){
 			//printf("Lista de parametros\n");
 
+			if(nodecall->son[0] == NULL){
+				fprintf(stderr, "[LINE %d] Semantic Error: Declaration and call funtions must have the same quantity of parameters\n",nodecall_line);
+				exit(4);
+			}
 
 			if(nodedef->son[0]->type == AST_PARAM){
 				//printf("Funcao com 1 parametro\n");
@@ -545,16 +547,18 @@ void verifica_tipos_parametros_funcao(AST* nodecall)
 				//printf("nodecal type = %d\n",nodecall->symbol->datatype);
 				//printf("Node def : %d\n",nodedef->son[1]->symbol->datatype);
 
+
+				if(nodecall->type==AST_ARG_FUNCAO){
+                    fprintf(stderr, "[LINE %d] Semantic Error: Declaration and call funtions must have the same quantity of parameters\n",
+                            nodecall_line);
+
+                    exit(4);
+				}
+
 				tipo_argumento_decl = nodedef->son[1]->symbol->datatype;
 
 
-				if(nodecall->type==AST_ARG_FUNCAO){
-					fprintf(stderr, "[LINE %d] ERRO: Quantidade de parametros na chamada da funcao é maior do que o declarado.\n",
-							nodecall_line);
-					exit(4);
-				}
-
-                if(nodecall->expression_datatype != NO_EXPRESSION){
+				if(nodecall->expression_datatype != NO_EXPRESSION){
                     //printf("Eh uma expressao\n");
                     //printf("Tipo da expressao %d\n",nodecall->expression_datatype );
 					tipo_argumento_call = nodecall->expression_datatype;
@@ -574,7 +578,7 @@ void verifica_tipos_parametros_funcao(AST* nodecall)
 
 
 		if(tipo_argumento_decl != tipo_argumento_call){
-			fprintf(stderr, "[LINE %d] ERRO: Tipos dos argumentos precisam ser iguais a declaracao da funcao.\n",
+			fprintf(stderr, "[LINE %d] Semantic Error: Arguments at function call must have the same type as declared in function header.\n",
 					nodecall_line);
 			exit(4);
 		}
