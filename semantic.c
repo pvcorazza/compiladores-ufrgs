@@ -52,6 +52,12 @@ void set_declarations(AST *node) {
         }
     }
 
+	if (node->type == AST_SYMBOL) {
+		if (node->symbol->type == SYMBOL_LIT_INT) node->symbol->datatype = DATATYPE_INT;
+		if (node->symbol->type == SYMBOL_LIT_REAL) node->symbol->datatype = DATATYPE_FLOAT;
+		if (node->symbol->type == SYMBOL_LIT_CHAR) node->symbol->datatype = DATATYPE_CHAR;
+	}
+
 
 	//Verifica declaracao dos parametros da funcao
 	if(node->type == AST_PARAM){
@@ -151,8 +157,26 @@ void check_usage(AST *node){
     if (!node) return;
 
 	switch(node->type) {
-		case AST_ATRIBUICAO:
 
+		//Testa valores de inicialização nas declarações globais
+		case AST_DECL_GLOBAL:
+		case AST_DECL_PONTEIRO:
+			if (node->son[1]->symbol != NULL) {
+				if (node->symbol->datatype == DATATYPE_INT && node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
+					fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to int.\n",
+							node->line_number);
+					exit(4);
+				}
+
+				if (node->symbol->datatype == DATATYPE_CHAR && node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
+					fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to char.\n",
+							node->line_number);
+					exit(4);
+				}
+			}
+			break;
+
+		case AST_ATRIBUICAO:
 			//Atribuicao para um identificador que eh ponteiro:
 			if (node->symbol->type == SYMBOL_POINTER) {
 				//printf("%s\n","Atribuicao de ponteiro");
@@ -168,8 +192,8 @@ void check_usage(AST *node){
 					exit(4);
 				}
 
-
 				if (node->son[0]->symbol != NULL) {
+
 					if (node->symbol->datatype == DATATYPE_INT && node->son[0]->symbol->datatype == DATATYPE_FLOAT) {
 						fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to int.\n",
 								node->line_number);
@@ -319,7 +343,6 @@ void check_usage(AST *node){
 
             if (node->son[0]->type != AST_SYMBOL) {
 
-				printf("TIPE: %d\n", node->son[0]->type);
                 //Se a expressão não retornar um inteiro ou char
                 if ((node->son[0]->type != AST_SOMA) && (node->son[0]->type != AST_SUB)) {
                     fprintf(stderr, "[LINE %d] Semantic Error: index must be an integer.\n", node->line_number);
@@ -330,7 +353,7 @@ void check_usage(AST *node){
 
                 }
             }
-			
+
 			break;
 
 	}
