@@ -9,6 +9,7 @@
 
 int error = 0;
 AST *nodo_raiz;
+
 void semantic_analisys (AST *node) {
 
 	//guarda a raiz recebida
@@ -253,6 +254,7 @@ void check_operands(AST *node) {
 
 void check_usage(AST *node){
 	int i;
+	int return_type;
     if (!node) return;
 
 	switch(node->type) {
@@ -271,6 +273,18 @@ void check_usage(AST *node){
 			}
 			break;
 
+        case AST_DEF_FUNCAO:
+
+			return_type = check_return(node->son[2]);
+            if (node->symbol->datatype != return_type) {
+				if (return_type == 0) {
+					fprintf(stderr, "[LINE %d] Semantic Error: return of function not defined.\n", node->line_number);
+				} else {
+					fprintf(stderr, "[LINE %d] Semantic Error: return has incompatible type.\n", node->line_number);
+				}
+				error++;
+			}
+			break;
 		case AST_ATRIBUICAO:
 			//Atribuicao para um identificador que eh ponteiro:
 			if (node->symbol->type == SYMBOL_POINTER) {
@@ -603,4 +617,27 @@ void verifica_atribuicao_ponteiros(AST *node){
 
 void derreferencia(AST *node){
 
+}
+
+int check_return(AST* node) {
+    if(!node) return 0;
+
+    if(node->type == AST_RETURN) {
+		return check_datatype(node);
+    }
+    for(int i=0; i<MAX_SONS; i++) {
+        return check_return(node->son[i]);
+    }
+}
+
+int check_datatype(AST* node) {
+
+	if (node->son[0]->symbol != NULL) {
+		return node->son[0]->symbol->datatype;
+	}
+
+	if (node->son[0]->expression_datatype != NO_EXPRESSION) {
+		return node->son[0]->expression_datatype;
+	}
+	return NO_EXPRESSION;
 }
