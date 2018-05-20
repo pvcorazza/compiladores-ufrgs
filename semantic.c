@@ -168,17 +168,13 @@ void check_usage(AST *node){
 		case AST_DECL_GLOBAL:
 		case AST_DECL_PONTEIRO:
 			if (node->son[1]->symbol != NULL) {
-				if (node->symbol->datatype == DATATYPE_INT && node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
-					fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to int.\n",
-							node->line_number);
-					error++;
-				}
-
-				if (node->symbol->datatype == DATATYPE_CHAR && node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
-					fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to char.\n",
-							node->line_number);
-					error++;
-				}
+                if (node->symbol->datatype == DATATYPE_FLOAT || node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
+                    if (node->symbol->datatype != node->son[1]->symbol->datatype) {
+                        fprintf(stderr, "[LINE %d] Semantic Error: incompatible types.\n",
+                                node->line_number);
+                        error++;
+                    }
+                }
 			}
 			break;
 
@@ -199,18 +195,13 @@ void check_usage(AST *node){
 				}
 
 				if (node->son[0]->symbol != NULL) {
-
-					if (node->symbol->datatype == DATATYPE_INT && node->son[0]->symbol->datatype == DATATYPE_FLOAT) {
-						fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to int.\n",
-								node->line_number);
-						error++;
-					}
-
-					if (node->symbol->datatype == DATATYPE_CHAR && node->son[0]->symbol->datatype == DATATYPE_FLOAT) {
-						fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to char.\n",
-								node->line_number);
-						error++;
-					}
+                    if (node->symbol->datatype == DATATYPE_FLOAT || node->son[0]->symbol->datatype == DATATYPE_FLOAT) {
+                        if (node->symbol->datatype != node->son[0]->symbol->datatype) {
+                            fprintf(stderr, "[LINE %d] Semantic Error: incompatible types.\n",
+                                    node->line_number);
+                            error++;
+                        }
+                    }
 				}
 
 				switch (node->son[0]->type) {
@@ -239,17 +230,13 @@ void check_usage(AST *node){
 						int tipo_identificador = nodo_decl->symbol->datatype;
 						int tipo_do_ponteiro = node_decl_pointer->symbol->datatype;
 
-						if (tipo_identificador == DATATYPE_INT && tipo_do_ponteiro == DATATYPE_FLOAT) {
-							fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to int.\n",
-									node->line_number);
-							exit(4);
-						}
-
-						if (tipo_identificador == DATATYPE_CHAR && tipo_do_ponteiro== DATATYPE_FLOAT) {
-							fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to char.\n",
-									node->line_number);
-							exit(4);
-						}
+                        if (tipo_identificador == DATATYPE_FLOAT || tipo_do_ponteiro == DATATYPE_FLOAT) {
+                            if (tipo_identificador != tipo_do_ponteiro) {
+                                fprintf(stderr, "[LINE %d] Semantic Error: incompatible types.\n",
+                                        node->line_number);
+                                error++;
+                            }
+                        }
 
 						//printf("Tipo declarado do ponteiro: %d\n",tipo_do_ponteiro);
 						//printf("Tipo declarado do identificador: %d\n",tipo_identificador);
@@ -325,19 +312,15 @@ void check_usage(AST *node){
 			break;
 
         case AST_ATRIBUICAO_VETOR: //Atribuição
-			if (node->son[1]->symbol != NULL) {
-				if (node->symbol->datatype == DATATYPE_INT && node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
-					fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to int.\n",
-							node->line_number);
-					error++;
-				}
-
-				if (node->symbol->datatype == DATATYPE_CHAR && node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
-					fprintf(stderr, "[LINE %d] Semantic Error: float can not be converted to char.\n",
-							node->line_number);
-					error++;
-				}
-			}
+            if (node->son[0]->symbol != NULL) {
+                if (node->symbol->datatype == DATATYPE_FLOAT || node->son[0]->symbol->datatype == DATATYPE_FLOAT) {
+                    if (node->symbol->datatype != node->son[0]->symbol->datatype) {
+                        fprintf(stderr, "[LINE %d] Semantic Error: incompatible types.\n",
+                                node->line_number);
+                        error++;
+                    }
+                }
+            }
 		case AST_VET: //Expressão
 
 			//Se o indentificador não for vetor
