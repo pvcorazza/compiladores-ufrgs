@@ -325,6 +325,18 @@ void check_usage(AST *node){
                                 error++;
                             }
                         }
+                        nodo_decl->son[1]->symbol->text = node_decl_pointer->son[1]->symbol->text;
+                        
+                        break;
+                    case AST_SYMBOL:
+
+						if(node->son[0]->symbol->type == SYMBOL_VECTOR) {
+							fprintf(stderr, "[LINE %d] Semantic Error: Assignment to a scalar with a vector symbol.\n",
+									node->line_number);
+							exit(4);
+						}
+						
+                        break;
 
 						/*
 						if (tipo_identificador != NO_EXPRESSION) {
@@ -339,11 +351,10 @@ void check_usage(AST *node){
 						//printf("Atribui ao identificador \"%s\" ", nodo_decl->symbol->text);
 						//printf("cujo valor antigo é: %s ", nodo_decl->son[1]->symbol->text);
 						//Coloca novo valor na hash
-						nodo_decl->son[1]->symbol->text = node_decl_pointer->son[1]->symbol->text;
+						//nodo_decl->son[1]->symbol->text = node_decl_pointer->son[1]->symbol->text;
 						//printf("o novo valor: %s ", nodo_decl->son[1]->symbol->text);
 						//printf("que veio do ponteiro :\"%s\"\n", node_decl_pointer->symbol->text);
 
-						break;
 
 				}
 
