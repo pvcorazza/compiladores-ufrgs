@@ -394,7 +394,7 @@ void check_usage(AST *node){
 					error++;
 				}
 				//Se o identificador não for inteiro ou char
-				if ((node->son[0]->symbol->datatype == DATATYPE_FLOAT)) {
+				if (node->son[0]->symbol->datatype == DATATYPE_FLOAT) {
 					fprintf(stderr, "[LINE %d] Semantic Error: index must be an integer.\n", node->line_number);
 					error++;
 				}
