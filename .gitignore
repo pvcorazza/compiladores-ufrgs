@@ -2,3 +2,16 @@
 cmake-build-debug/
 
 \.idea/
+
+*.o
+etapa*
+
+lex\.yy\.c
+
+lex\.yy\.h
+
+y\.output
+
+y\.tab\.c
+
+y\.tab\.h
