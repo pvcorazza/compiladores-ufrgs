@@ -108,14 +108,14 @@ void set_expression_datatypes(AST *node) {
 
         case AST_EXP_PARENTESES:
             set_expression_datatypes(node->son[0]);
-            //printf("Parenteses, tipo: %d\n",node->son[0]->expression_datatype);
+            printf("Parenteses, tipo: %d\n",node->son[0]->expression_datatype);
             node->expression_datatype = node->son[0]->expression_datatype;
             break;
 		case AST_SOMA:
 		case AST_SUB:
 		case AST_MUL:
 		case AST_DIV:
-            //printf("Expressao aritmetica\n");
+            printf("Expressao aritmetica\n");
 			if (node->son[0]->symbol != NULL) {
 
                 /*printf("Datatype: %d\n",node->son[0]->symbol->datatype );
@@ -198,6 +198,7 @@ void set_expression_datatypes(AST *node) {
             break;
 
 		default:
+			//printf("DEFAULT NO_EXPRESSION\n");
 			node->expression_datatype = NO_EXPRESSION;
 	}
 	for (i=0; i<MAX_SONS; ++i)
@@ -300,9 +301,13 @@ void check_usage(AST *node){
 
 		AST * decl_vetor;
 		case AST_ATRIBUICAO_VETOR:
-			//printf("Atribuicao Vetor\n");
+			printf("Atribuicao Vetor\n");
 
+
+			int tipo_do_argumento = node->son[0]->symbol->datatype;
 			decl_vetor = procura_declaracao_vetor(nodo_raiz,node->symbol->text);
+			int tipo_decl_vetor = decl_vetor->symbol->datatype;
+
 
 			if(decl_vetor== NULL){
 
@@ -311,84 +316,78 @@ void check_usage(AST *node){
 			}
 
 
-			if (node->son[1]->symbol != NULL) {
-				if (decl_vetor->symbol->datatype == DATATYPE_FLOAT || node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
-					if (decl_vetor->symbol->datatype != node->son[1]->symbol->datatype) {
-						fprintf(stderr, "[LINE %d] Semantic Error: incompatible types.\n",
-								node->line_number);
-						error++;
-					}
-				}
+			if(tipo_do_argumento == DATATYPE_FLOAT){
+				fprintf(stderr, "[LINE %d] Semantic Error: Vector index must be a integer.\n",
+						node->line_number);
+				error++;
+
 			}
 
-			if (node->son[1]->expression_datatype != NO_EXPRESSION) {
-
-				if (node->symbol->datatype != node->son[1]->expression_datatype) {
-					fprintf(stderr, "[LINE %d] Semantic Error: incompatible types (expression).\n",
-							node->line_number);
-					error++;
-				}
-			}
 
 			AST *node_decl_pointer;
-			switch (node->son[0]->type) {
+			switch (node->son[1]->type) {
 				case AST_IDENT_DERREFERENCIA:
+					printf("AST_IDENT_DERREFERENCIA %s\n",node->son[1]->symbol->text);
+
 
 					//procura declaracao do ponteiro
-					node_decl_pointer = procura_declaracao_ponteiro(nodo_raiz, node->son[0]->symbol->text);
+					node_decl_pointer = procura_declaracao_ponteiro(nodo_raiz, node->son[1]->symbol->text);
 
-					//Procura a declaracao do identificador
-					AST *nodo_decl = procura_declaracao_global(nodo_raiz, node->symbol->text);
-
-
-					int tipo_identificador = nodo_decl->symbol->datatype;
 					int tipo_do_ponteiro = node_decl_pointer->symbol->datatype;
 
-					if (tipo_identificador == DATATYPE_FLOAT || tipo_do_ponteiro == DATATYPE_FLOAT) {
-						if (tipo_identificador != tipo_do_ponteiro) {
+					if (tipo_decl_vetor == DATATYPE_FLOAT || tipo_do_ponteiro == DATATYPE_FLOAT) {
+						if (tipo_decl_vetor != tipo_do_ponteiro) {
 							fprintf(stderr, "[LINE %d] Semantic Error: incompatible types.\n",
 									node->line_number);
 							error++;
 						}
 					}
-					nodo_decl->son[1]->symbol->text = node_decl_pointer->son[1]->symbol->text;
+					//nodo_decl->son[1]->symbol->text = node_decl_pointer->son[1]->symbol->text;
 
 					break;
 				case AST_SYMBOL:
+					printf("AST_SYMBOL\n");
 
-					if(node->son[0]->symbol->type == SYMBOL_VECTOR) {
+
+					if(node->son[1]->symbol->type == SYMBOL_VECTOR) {
 						fprintf(stderr, "[LINE %d] Semantic Error: Assignment to a scalar with a vector symbol.\n",
 								node->line_number);
 						exit(4);
 					}
-					if(node->son[0]->symbol->type == SYMBOL_POINTER) {
+					if(node->son[1]->symbol->type == SYMBOL_POINTER) {
 						fprintf(stderr, "[LINE %d] Semantic Error: Assignment to a scalar with a pointer symbol.\n",
 								node->line_number);
 						exit(4);
 					}
-					if(node->son[0]->symbol->type == SYMBOL_FUNCTION) {
-						fprintf(stderr, "[LINE %d] Semantic Error: Assignment to a scalar with a function symbol.\n",
+					if(node->son[1]->symbol->type == SYMBOL_FUNCTION) {
+						fprintf(stderr, "[LINE %d] Semantic Error: Cannot assign a scalar with a function symbol identifier.\n",
 								node->line_number);
 						exit(4);
 					}
+
+					if (node->son[1]->symbol != NULL) {
+						if (tipo_decl_vetor == DATATYPE_FLOAT || node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
+							if (tipo_decl_vetor != node->son[1]->symbol->datatype) {
+								fprintf(stderr, "[LINE %d] Semantic Error: incompatible types.\n",
+										node->line_number);
+								error++;
+							}
+						}
+					}
 					break;
 
-					/*
-                    if (tipo_identificador != NO_EXPRESSION) {
+				default:
 
-                        if (tipo_identificador != node_decl_pointer->expression_datatype) {
-                            fprintf(stderr, "[LINE %d] Semantic Error: incompatible types (expression).\n",
-                                    node->line_number);
-                            error++;
-                        }
-                    }*/
+					if (node->son[1]->expression_datatype != NO_EXPRESSION) {
 
-					//printf("Atribui ao identificador \"%s\" ", nodo_decl->symbol->text);
-					//printf("cujo valor antigo é: %s ", nodo_decl->son[1]->symbol->text);
-					//Coloca novo valor na hash
-					//nodo_decl->son[1]->symbol->text = node_decl_pointer->son[1]->symbol->text;
-					//printf("o novo valor: %s ", nodo_decl->son[1]->symbol->text);
-					//printf("que veio do ponteiro :\"%s\"\n", node_decl_pointer->symbol->text);
+						printf("TIPO DA EXPRESSAO : %d\n",node->son[1]->expression_datatype );
+
+						if (tipo_decl_vetor != node->son[1]->expression_datatype) {
+							fprintf(stderr, "[LINE %d] Semantic Error: incompatible types (expression).\n",
+									node->line_number);
+							error++;
+						}
+					}
 
 
 			}
@@ -478,6 +477,9 @@ void check_usage(AST *node){
 							exit(4);
 						}
                         break;
+					default:
+						printf("DEFAULT ATRIBUICAO\n");
+						break;
 
 						/*
 						if (tipo_identificador != NO_EXPRESSION) {
