@@ -260,14 +260,14 @@ void check_usage(AST *node){
 
         case AST_DEF_FUNCAO:
 			check_return(node->son[2], node);
+			if (node->return_datatype !=0) {
             if (node->symbol->datatype != node->return_datatype) {
-				if (node->return_datatype !=0) {
-					fprintf(stderr, "[LINE %d] Semantic Error: return has incompatible type.\n", node->line_number);
-				} else {
+				
 					fprintf(stderr, "[LINE %d] Semantic Error: return for the function %s() has not declared.\n", node->line_number, node->symbol->text);
-				}
+				
 				error++;
 			}
+		}
 			break;
 		case AST_ATRIBUICAO:
 			//Atribuicao para um identificador que eh ponteiro:
