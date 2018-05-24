@@ -335,7 +335,11 @@ void check_usage(AST *node){
 									node->line_number);
 							exit(4);
 						}
-						
+						if(node->son[0]->symbol->type == SYMBOL_POINTER) {
+							fprintf(stderr, "[LINE %d] Semantic Error: Assignment to a scalar with a pointer symbol.\n",
+									node->line_number);
+							exit(4);
+						}
                         break;
 
 						/*
