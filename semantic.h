@@ -18,6 +18,7 @@ void verifica_atribuicao_ponteiros(AST *node);
 void verifica_tipos_parametros_funcao(AST* nodecall);
 AST *procura_declaracao_ponteiro(AST *node, char *nome);
 AST *procura_declaracao_global(AST *node, char *nome);
+AST *procura_declaracao_vetor(AST *node, char *nome);
 void check_return(AST* node, AST* function_node);
 int check_datatype(AST* node);
 #endif //TESTE_SEMANTIC_H

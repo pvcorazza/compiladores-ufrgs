@@ -58,6 +58,7 @@ void set_declarations(AST *node) {
     }
 
 	if (node->type == AST_SYMBOL) {
+
 		if (node->symbol->type == SYMBOL_LIT_INT) node->symbol->datatype = DATATYPE_INT;
 		if (node->symbol->type == SYMBOL_LIT_REAL) node->symbol->datatype = DATATYPE_FLOAT;
 		if (node->symbol->type == SYMBOL_LIT_CHAR) node->symbol->datatype = DATATYPE_CHAR;
@@ -269,7 +270,108 @@ void check_usage(AST *node){
 			}
 		}
 			break;
+
+
+
+		AST * decl_vetor;
+		case AST_ATRIBUICAO_VETOR:
+			//printf("Atribuicao Vetor\n");
+
+			decl_vetor = procura_declaracao_vetor(nodo_raiz,node->symbol->text);
+
+			if(decl_vetor== NULL){
+
+                fprintf(stderr, "[LINE %d] Semantic Error: Vector is not declared.\n",
+                        node->line_number);
+			}
+
+
+			if (node->son[1]->symbol != NULL) {
+				if (decl_vetor->symbol->datatype == DATATYPE_FLOAT || node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
+					if (decl_vetor->symbol->datatype != node->son[1]->symbol->datatype) {
+						fprintf(stderr, "[LINE %d] Semantic Error: incompatible types.\n",
+								node->line_number);
+						error++;
+					}
+				}
+			}
+
+			if (node->son[1]->expression_datatype != NO_EXPRESSION) {
+
+				if (node->symbol->datatype != node->son[1]->expression_datatype) {
+					fprintf(stderr, "[LINE %d] Semantic Error: incompatible types (expression).\n",
+							node->line_number);
+					error++;
+				}
+			}
+
+			AST *node_decl_pointer;
+			switch (node->son[0]->type) {
+				case AST_IDENT_DERREFERENCIA:
+
+					//procura declaracao do ponteiro
+					node_decl_pointer = procura_declaracao_ponteiro(nodo_raiz, node->son[0]->symbol->text);
+
+					//Procura a declaracao do identificador
+					AST *nodo_decl = procura_declaracao_global(nodo_raiz, node->symbol->text);
+
+
+					int tipo_identificador = nodo_decl->symbol->datatype;
+					int tipo_do_ponteiro = node_decl_pointer->symbol->datatype;
+
+					if (tipo_identificador == DATATYPE_FLOAT || tipo_do_ponteiro == DATATYPE_FLOAT) {
+						if (tipo_identificador != tipo_do_ponteiro) {
+							fprintf(stderr, "[LINE %d] Semantic Error: incompatible types.\n",
+									node->line_number);
+							error++;
+						}
+					}
+					nodo_decl->son[1]->symbol->text = node_decl_pointer->son[1]->symbol->text;
+
+					break;
+				case AST_SYMBOL:
+
+					if(node->son[0]->symbol->type == SYMBOL_VECTOR) {
+						fprintf(stderr, "[LINE %d] Semantic Error: Assignment to a scalar with a vector symbol.\n",
+								node->line_number);
+						exit(4);
+					}
+					if(node->son[0]->symbol->type == SYMBOL_POINTER) {
+						fprintf(stderr, "[LINE %d] Semantic Error: Assignment to a scalar with a pointer symbol.\n",
+								node->line_number);
+						exit(4);
+					}
+					if(node->son[0]->symbol->type == SYMBOL_FUNCTION) {
+						fprintf(stderr, "[LINE %d] Semantic Error: Assignment to a scalar with a function symbol.\n",
+								node->line_number);
+						exit(4);
+					}
+					break;
+
+					/*
+                    if (tipo_identificador != NO_EXPRESSION) {
+
+                        if (tipo_identificador != node_decl_pointer->expression_datatype) {
+                            fprintf(stderr, "[LINE %d] Semantic Error: incompatible types (expression).\n",
+                                    node->line_number);
+                            error++;
+                        }
+                    }*/
+
+					//printf("Atribui ao identificador \"%s\" ", nodo_decl->symbol->text);
+					//printf("cujo valor antigo é: %s ", nodo_decl->son[1]->symbol->text);
+					//Coloca novo valor na hash
+					//nodo_decl->son[1]->symbol->text = node_decl_pointer->son[1]->symbol->text;
+					//printf("o novo valor: %s ", nodo_decl->son[1]->symbol->text);
+					//printf("que veio do ponteiro :\"%s\"\n", node_decl_pointer->symbol->text);
+
+
+			}
+
+			break;
+
 		case AST_ATRIBUICAO:
+			//printf("Atribuicao \n");
 			//Atribuicao para um identificador que eh ponteiro:
 			if (node->symbol->type == SYMBOL_POINTER) {
 				//printf("%s\n","Atribuicao de ponteiro");
@@ -277,13 +379,18 @@ void check_usage(AST *node){
 				//printf("Aponta para id = %s\n",node->point_to_symbol->text);
 
 			}
-				//Atribuicao para identificador escalar:
+				//Atribuicao para identificador escalar ou vetor:
 			else {
+
 				if (node->symbol->type != SYMBOL_SCALAR) {
+
+					//printf("Tipo do nodo: %d\n",node->symbol->type);
 					fprintf(stderr, "[LINE %d] Semantic Error: id %s must be a scalar.\n", node->line_number,
 							node->symbol->text);
 					error++;
+
 				}
+
 
 				if (node->son[0]->symbol != NULL) {
                     if (node->symbol->datatype == DATATYPE_FLOAT || node->son[0]->symbol->datatype == DATATYPE_FLOAT) {
@@ -381,7 +488,8 @@ void check_usage(AST *node){
 
 			break;
 
-        case AST_ATRIBUICAO_VETOR: //Atribuição
+        /*case AST_ATRIBUICAO_VETOR: //Atribuição
+			printf("Atribuicao de vetor\n");
             if (node->son[1]->symbol != NULL) {
                 if (node->symbol->datatype == DATATYPE_FLOAT || node->son[1]->symbol->datatype == DATATYPE_FLOAT) {
                     if (node->symbol->datatype != node->son[1]->symbol->datatype) {
@@ -399,6 +507,7 @@ void check_usage(AST *node){
 					error++;
 				}
 			}
+			break;*/
 		case AST_VET: //Expressão
 
 			//Se o indentificador não for vetor
@@ -515,6 +624,30 @@ AST *procura_declaracao_ponteiro(AST *node, char *nome)
 				return funcao;
 		}
 	return 0;
+}
+
+AST *procura_declaracao_vetor(AST *node, char *nome)
+{
+	int i;
+	AST *funcao;
+
+	if(!node) return NULL;
+
+	if(node->type == AST_VETOR_VAZIO || node->type == AST_VETOR_INIC)
+		if(node->symbol != NULL){
+			if(strcmp(node->symbol->text, nome) == 0)
+				return node;
+
+		}
+
+
+	for(i=0; i < MAX_SONS; i++)
+		if(node->son[i] != NULL) {
+			funcao = procura_declaracao_vetor(node->son[i], nome);
+			if(funcao)
+				return funcao;
+		}
+	return NULL;
 }
 
 void verifica_tipos_parametros_funcao(AST* nodecall)
