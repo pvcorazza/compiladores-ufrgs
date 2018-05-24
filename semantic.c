@@ -108,14 +108,14 @@ void set_expression_datatypes(AST *node) {
 
         case AST_EXP_PARENTESES:
             set_expression_datatypes(node->son[0]);
-            printf("Parenteses, tipo: %d\n",node->son[0]->expression_datatype);
+            //printf("Parenteses, tipo: %d\n",node->son[0]->expression_datatype);
             node->expression_datatype = node->son[0]->expression_datatype;
             break;
 		case AST_SOMA:
 		case AST_SUB:
 		case AST_MUL:
 		case AST_DIV:
-            printf("Expressao aritmetica\n");
+            //printf("Expressao aritmetica\n");
 			if (node->son[0]->symbol != NULL) {
 
                 /*printf("Datatype: %d\n",node->son[0]->symbol->datatype );
@@ -300,11 +300,12 @@ void check_usage(AST *node){
 
 
 		AST * decl_vetor;
+		int tipo_do_argumento;
 		case AST_ATRIBUICAO_VETOR:
-			printf("Atribuicao Vetor\n");
+			//printf("Atribuicao Vetor\n");
 
 
-			int tipo_do_argumento = node->son[0]->symbol->datatype;
+			tipo_do_argumento = node->son[0]->symbol->datatype;
 			decl_vetor = procura_declaracao_vetor(nodo_raiz,node->symbol->text);
 			int tipo_decl_vetor = decl_vetor->symbol->datatype;
 
@@ -327,7 +328,7 @@ void check_usage(AST *node){
 			AST *node_decl_pointer;
 			switch (node->son[1]->type) {
 				case AST_IDENT_DERREFERENCIA:
-					printf("AST_IDENT_DERREFERENCIA %s\n",node->son[1]->symbol->text);
+					//printf("AST_IDENT_DERREFERENCIA %s\n",node->son[1]->symbol->text);
 
 
 					//procura declaracao do ponteiro
@@ -346,7 +347,7 @@ void check_usage(AST *node){
 
 					break;
 				case AST_SYMBOL:
-					printf("AST_SYMBOL\n");
+					//printf("AST_SYMBOL\n");
 
 
 					if(node->son[1]->symbol->type == SYMBOL_VECTOR) {
@@ -380,7 +381,7 @@ void check_usage(AST *node){
 
 					if (node->son[1]->expression_datatype != NO_EXPRESSION) {
 
-						printf("TIPO DA EXPRESSAO : %d\n",node->son[1]->expression_datatype );
+						//printf("TIPO DA EXPRESSAO : %d\n",node->son[1]->expression_datatype );
 
 						if (tipo_decl_vetor != node->son[1]->expression_datatype) {
 							fprintf(stderr, "[LINE %d] Semantic Error: incompatible types (expression).\n",
@@ -478,7 +479,7 @@ void check_usage(AST *node){
 						}
                         break;
 					default:
-						printf("DEFAULT ATRIBUICAO\n");
+						//printf("DEFAULT ATRIBUICAO\n");
 						break;
 
 						/*
