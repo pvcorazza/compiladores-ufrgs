@@ -262,9 +262,9 @@ void check_usage(AST *node){
 			check_return(node->son[2], node);
 			if (node->return_datatype !=0) {
             if (node->symbol->datatype != node->return_datatype) {
-				
+
 					fprintf(stderr, "[LINE %d] Semantic Error: return for the function %s() has not declared.\n", node->line_number, node->symbol->text);
-				
+
 				error++;
 			}
 		}
@@ -326,7 +326,7 @@ void check_usage(AST *node){
                             }
                         }
                         nodo_decl->son[1]->symbol->text = node_decl_pointer->son[1]->symbol->text;
-                        
+
                         break;
                     case AST_SYMBOL:
 
@@ -526,93 +526,124 @@ void verifica_tipos_parametros_funcao(AST* nodecall)
 	if(nodecall->symbol != NULL) nodedef = procura_def_funcao(nodo_raiz, nodecall->symbol->text);
 
 	nodecall = nodecall->son[0];
-	while(nodedef != NULL){
 
-        if(nodecall == NULL){
-			fprintf(stderr, "[LINE %d] Semantic Error: Declaration and call funtions must have the same quantity of parameters\n",nodecall_line);
+	if(nodecall == NULL){
+		if(nodedef->son[1] != NULL){
+
+			//Declaracao de funcao tem parametros mas na chamada nao informa os argumentos
+			fprintf(stderr,
+					"[LINE %d] Semantic Error: Function call must have arguments\n",
+					nodecall_line);
 			exit(4);
-        }
-
-		if(nodedef->type == AST_PARAM_LIST){
-			//printf("Lista de parametros\n");
-
-			if(nodecall->son[0] == NULL){
-				fprintf(stderr, "[LINE %d] Semantic Error: Declaration and call funtions must have the same quantity of parameters\n",nodecall_line);
-				exit(4);
-			}
-
-			if(nodedef->son[0]->type == AST_PARAM){
-				//printf("Funcao com 1 parametro\n");
-                //printf("Node call: %d\n",nodecall->son[0]->symbol->datatype );
-				//printf("Node def : %d\n",nodedef->son[0]->symbol->datatype);
-
-				tipo_argumento_decl = nodedef->son[0]->symbol->datatype;
-
-                if(nodecall->son[0]->expression_datatype != NO_EXPRESSION){
-                    //printf("Eh uma expressao\n");
-                    //printf("Tipo da expressao %d\n",nodecall->son[0]->expression_datatype );
-					tipo_argumento_call = nodecall->son[0]->expression_datatype;
-				}
-                else{
-                    //printf("Arg call type %d\n", nodecall->son[0]->symbol->datatype);
-					tipo_argumento_call = nodecall->son[0]->symbol->datatype;
-
-                }
-
-
-
-                nodecall = nodecall->son[1]; //proximo argumento da chamada de funcao
-
-            }
-
-			if(nodedef->son[1]->type == AST_PARAM){
-                //printf("Ultimo paramentro\n");
-
-				//printf("nodecal type = %d\n",nodecall->symbol->datatype);
-				//printf("Node def : %d\n",nodedef->son[1]->symbol->datatype);
-
-
-				if(nodecall->type==AST_ARG_FUNCAO){
-                    fprintf(stderr, "[LINE %d] Semantic Error: Declaration and call funtions must have the same quantity of parameters\n",
-                            nodecall_line);
-
-                    exit(4);
-				}
-
-				tipo_argumento_decl = nodedef->son[1]->symbol->datatype;
-
-
-				if(nodecall->expression_datatype != NO_EXPRESSION){
-                    //printf("Eh uma expressao\n");
-                    //printf("Tipo da expressao %d\n",nodecall->expression_datatype );
-					tipo_argumento_call = nodecall->expression_datatype;
-
-				}
-                else{
-                    //printf("Arg call type %d\n", nodecall->symbol->datatype);
-					tipo_argumento_call = nodecall->symbol->datatype;
-
-
-				}
-
-
-			}
 		}
+	}
+	else {
 
-
-
-		if(tipo_argumento_decl != tipo_argumento_call){
-			fprintf(stderr, "[LINE %d] Semantic Error: Arguments at function call must have the same type as declared in function header.\n",
+		if(nodedef->son[1] == NULL){
+			//Chamade de funcao passando argumenttos mas na definicao da funcao nao tem parametros
+			fprintf(stderr,
+					"[LINE %d] Semantic Error: Function call cannot have arguments\n",
 					nodecall_line);
 			exit(4);
 		}
 
+		while (nodedef != NULL) {
 
-		nodedef = nodedef->son[1]; //proximo parametro na declaracao da funcao
+			if (nodecall == NULL) {
+				fprintf(stderr,
+						"[LINE %d] Semantic Error: Declaration and call funtions must have the same quantity of parameters\n",
+						nodecall_line);
+				exit(4);
+			}
+
+			if (nodedef->type == AST_PARAM_LIST) {
+				//printf("Lista de parametros\n");
+
+				if (nodecall->son[0] == NULL) {
+					fprintf(stderr,
+							"[LINE %d] Semantic Error: Declaration and call funtions must have the same quantity of parameters\n",
+							nodecall_line);
+					exit(4);
+				}
+
+				if (nodedef->son[0]->type == AST_PARAM) {
+					//printf("Funcao com 1 parametro\n");
+					//printf("Node call: %d\n",nodecall->son[0]->symbol->datatype );
+					//printf("Node def : %d\n",nodedef->son[0]->symbol->datatype);
+
+					tipo_argumento_decl = nodedef->son[0]->symbol->datatype;
+
+					if (nodecall->son[0]->expression_datatype != NO_EXPRESSION) {
+						//printf("Eh uma expressao\n");
+						//printf("Tipo da expressao %d\n",nodecall->son[0]->expression_datatype );
+						tipo_argumento_call = nodecall->son[0]->expression_datatype;
+					} else {
+						//printf("Arg call type %d\n", nodecall->son[0]->symbol->datatype);
+						tipo_argumento_call = nodecall->son[0]->symbol->datatype;
+
+					}
+
+
+					nodecall = nodecall->son[1]; //proximo argumento da chamada de funcao
+
+				}
+
+				if (nodedef->son[1]->type == AST_PARAM) {
+					//printf("Ultimo paramentro\n");
+
+					//printf("nodecal type = %d\n",nodecall->symbol->datatype);
+					//printf("Node def : %d\n",nodedef->son[1]->symbol->datatype);
+
+
+					if (nodecall->type == AST_ARG_FUNCAO) {
+						fprintf(stderr,
+								"[LINE %d] Semantic Error: Declaration and call funtions must have the same quantity of parameters\n",
+								nodecall_line);
+
+						exit(4);
+					}
+
+					tipo_argumento_decl = nodedef->son[1]->symbol->datatype;
+
+
+					if (nodecall->expression_datatype != NO_EXPRESSION) {
+						//printf("Eh uma expressao\n");
+						//printf("Tipo da expressao %d\n",nodecall->expression_datatype );
+						tipo_argumento_call = nodecall->expression_datatype;
+
+					} else {
+						//printf("Arg call type %d\n", nodecall->symbol->datatype);
+						tipo_argumento_call = nodecall->symbol->datatype;
+
+
+					}
+
+
+				}
+			}
+
+
+			if (tipo_argumento_decl != tipo_argumento_call) {
+				fprintf(stderr,
+						"[LINE %d] Semantic Error: Arguments at function call must have the same type as declared in function header.\n",
+						nodecall_line);
+				exit(4);
+			}
+
+
+			nodedef = nodedef->son[1]; //proximo parametro na declaracao da funcao
+
+		}
+
+		if(nodecall->son[0] != NULL){
+
+			fprintf(stderr,
+					"[LINE %d] Semantic Error: Function call have more arguments then declared\n",
+					nodecall_line);
+			exit(4);
+		}
 
 	}
-
-
 }
 
 void verifica_atribuicao_ponteiros(AST *node){
