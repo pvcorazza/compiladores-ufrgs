@@ -16,6 +16,8 @@
 #define DATATYPE_CHAR 502
 #define DATATYPE_FLOAT 503
 
+#define DATATYPE_INTERNAL_BOOL 504
+
 typedef struct table_entry {
 	char *text;
 	int type;

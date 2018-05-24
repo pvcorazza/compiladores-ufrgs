@@ -108,23 +108,20 @@ void set_expression_datatypes(AST *node) {
 
         case AST_EXP_PARENTESES:
             set_expression_datatypes(node->son[0]);
+            //printf("Parenteses, tipo: %d\n",node->son[0]->expression_datatype);
             node->expression_datatype = node->son[0]->expression_datatype;
             break;
 		case AST_SOMA:
 		case AST_SUB:
 		case AST_MUL:
 		case AST_DIV:
-		case AST_LE:
-		case AST_GE:
-		case AST_EQ:
-		case AST_NE:
-		case AST_AND:
-		case AST_OR:
-		case AST_G:
-		case AST_L:
-		case AST_NOT:
-
+            //printf("Expressao aritmetica\n");
 			if (node->son[0]->symbol != NULL) {
+
+                /*printf("Datatype: %d\n",node->son[0]->symbol->datatype );
+                if(node->son[0]->expression_datatype == DATATYPE_INTERNAL_BOOL){
+                    printf("Temos booleno em exp aritimetica\n");
+                }*/
 
                 if ((node->son[0]->symbol->datatype == DATATYPE_INT) || (node->son[0]->symbol->datatype == DATATYPE_FLOAT) || (node->son[0]->symbol->datatype == DATATYPE_CHAR)) {
                     expr1 = node->son[0]->symbol->datatype;
@@ -141,6 +138,10 @@ void set_expression_datatypes(AST *node) {
 			}
 
 			if (node->son[1]->symbol != NULL) {
+               /* printf("Datatype: %d\n",node->son[1]->symbol->datatype );
+                if(node->son[1]->expression_datatype == DATATYPE_INTERNAL_BOOL){
+                    printf("Temos booleno em exp aritimetica\n");
+                }*/
 
                 if ((node->son[1]->symbol->datatype != DATATYPE_INT) || (node->son[1]->symbol->datatype != DATATYPE_FLOAT) ||(node->son[1]->symbol->datatype != DATATYPE_CHAR)) {
                     expr2 = node->son[1]->symbol->datatype;
@@ -156,7 +157,18 @@ void set_expression_datatypes(AST *node) {
 				expr2 = node->son[1]->expression_datatype;
 			}
 
+
+
 			if (expr1 >= 0 && expr2 >= 0) {
+
+                //printf("Exp 1: %d, Exp 2: %d\n",expr1,expr2);
+
+                if(expr1 == DATATYPE_INTERNAL_BOOL || expr2 == DATATYPE_INTERNAL_BOOL){
+
+                    fprintf(stderr, "[LINE %d] Semantic Error: Aritmetic expression cannot have boolean operators.\n",  node->line_number);
+                    exit(4);
+                }
+
 				if ((expr1 == SYMBOL_LIT_REAL) || (expr2 == SYMBOL_LIT_REAL) || (expr1 == DATATYPE_FLOAT) || (expr2 == DATATYPE_FLOAT)) {
 					node->expression_datatype = DATATYPE_FLOAT;
 				} else {
@@ -171,6 +183,19 @@ void set_expression_datatypes(AST *node) {
 			}
 
 			break;
+
+        case AST_LE:
+        case AST_GE:
+        case AST_EQ:
+        case AST_NE:
+        case AST_AND:
+        case AST_OR:
+        case AST_G:
+        case AST_L:
+        case AST_NOT:
+            node->expression_datatype = DATATYPE_INTERNAL_BOOL;
+            //node->son[0]->symbol->datatype = DATATYPE_INTERNAL_BOOL;
+            break;
 
 		default:
 			node->expression_datatype = NO_EXPRESSION;
