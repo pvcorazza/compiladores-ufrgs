@@ -31,3 +31,4 @@ int hash_address(char* text);
 hash_entry* hash_find(char* text);
 hash_entry* hash_insert(int type, char* text);
 void hash_print(void);
+hash_entry* make_temp();

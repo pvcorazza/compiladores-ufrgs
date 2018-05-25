@@ -78,3 +78,11 @@ void hash_print(void) {
         }
     }
 }
+
+hash_entry* make_temp(){
+    static int serialNumber = 0;
+    static char buffer[64];
+
+    sprintf(buffer, "Temporary_%d", serialNumber++);
+    return hash_insert(SYMBOL_SCALAR, buffer);
+}

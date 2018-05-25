@@ -11,7 +11,37 @@
 #define TAC_MUL 4
 #define TAC_DIV 5
 
-#include "symbol_table.h"
+
+
+#define TAC_L 6
+#define TAC_G 7
+
+#define TAC_ASS 8
+#define TAC_LE 8
+#define TAC_GE 9
+#define TAC_EQ 10
+#define TAC_NE 11
+#define TAC_AND 12
+#define TAC_OR 13
+#define TAC_NOT 14
+#define TAC_MOVE 15
+#define TAC_READ 16
+#define TAC_RET 17
+#define TAC_PRINT 18
+#define TAC_FUNCALL 19
+#define TAC_IFZ 20
+#define TAC_LABEL 21
+#define TAC_JUMP 22
+#define TAC_BEGINFUN 23
+#define TAC_ENDFUN 24
+#define TAC_AREAD 25
+#define TAC_AWRITE 26
+#define TAC_AINIPUSH 27
+#define TAC_ASIZE 28
+#define TAC_PARPOP 29
+#define TAC_PARPUSH 30
+
+#include "ast.h"
 
 
 typedef struct tac{
@@ -24,6 +54,10 @@ typedef struct tac{
 } TAC;
 
 TAC* tac_create(int type, hash_entry *res, hash_entry *op1, hash_entry *op2);
+void tac_print_single(TAC *tac);
+void tac_print_back(TAC *tac);
+TAC* tac_join(TAC* l1, TAC* l2);
+TAC* code_generator(AST *node);
 
 
 #endif //ETAPA4_TAC_H

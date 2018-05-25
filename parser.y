@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "ast.h"
 #include "semantic.h"
-
+#include "tac.h"
 
 
 int yylex();
@@ -81,8 +81,12 @@ AST *root;
 
 %%
 
-programa : corpo_programa {root = $$; astPrint($$,0); semantic_analisys(root);}
-	;
+programa : corpo_programa {root = $$; astPrint($$,0); //semantic_analisys(root);
+    fprintf(stderr, "\n----Impressão do código gerado----\n\n");
+	tac_print_back(code_generator($1));
+    fprintf(stderr, "\n----------------------------------\n");
+}
+
 
 corpo_programa: decl_var_globais corpo_programa { $$ = astCreate (AST_CORPO, 0, $1, $2, 0, 0); }
 	| conj_funcoes corpo_programa { $$ = astCreate (AST_CORPO, 0, $1, $2, 0, 0); }
