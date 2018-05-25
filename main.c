@@ -11,7 +11,7 @@ extern int yyparse();
 int main(int argc, char **argv) {
 
     if (argc < 1) {
-        fprintf(stderr, "Please, call: etapa4 nome_arquivo\n");
+        fprintf(stderr, "Please, call: etapa5 nome_arquivo\n");
         exit(1);
     }
 
