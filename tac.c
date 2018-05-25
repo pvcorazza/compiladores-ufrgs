@@ -31,18 +31,14 @@ void tac_print_single(TAC *tac)
         case TAC_SUB: fprintf(stderr, "TAC_SUB"); break;
         case TAC_MUL: fprintf(stderr, "TAC_MUL"); break;
         case TAC_DIV: fprintf(stderr, "TAC_DIV"); break;
-
-
-        case TAC_ASS: fprintf(stderr, "TAC_ASS"); break;
-
         case TAC_L: fprintf(stderr, "TAC_L"); break;
         case TAC_G: fprintf(stderr, "TAC_G"); break;
-//        case TAC_LE: fprintf(stderr, "TAC_LE"); break;
-//        case TAC_GE: fprintf(stderr, "TAC_GE"); break;
-//        case TAC_EQ: fprintf(stderr, "TAC_EQ"); break;
-//        case TAC_NE: fprintf(stderr, "TAC_NE"); break;
-//        case TAC_AND: fprintf(stderr, "TAC_AND"); break;
-//        case TAC_OR: fprintf(stderr, "TAC_OR"); break;
+        case TAC_LE: fprintf(stderr, "TAC_LE"); break;
+        case TAC_GE: fprintf(stderr, "TAC_GE"); break;
+        case TAC_EQ: fprintf(stderr, "TAC_EQ"); break;
+        case TAC_NE: fprintf(stderr, "TAC_NE"); break;
+        case TAC_AND: fprintf(stderr, "TAC_AND"); break;
+        case TAC_OR: fprintf(stderr, "TAC_OR"); break;
 //        case TAC_NOT: fprintf(stderr, "TAC_NOT"); break;
 //        case TAC_MOVE: fprintf(stderr, "TAC_MOVE"); break;
 //        case TAC_READ: fprintf(stderr, "TAC_READ"); break;
@@ -60,6 +56,8 @@ void tac_print_single(TAC *tac)
 //        case TAC_AINIPUSH: fprintf(stderr, "TAC_AINIPUSH"); break;
 //        case TAC_ASIZE: fprintf(stderr, "TAC_ASIZE"); break;
 //        case TAC_PARPUSH: fprintf(stderr, "TAC_PARPUSH"); break;
+
+        case TAC_ASS: fprintf(stderr, "TAC_ASS"); break;
 
         default: fprintf(stderr, "TAC_UNKNOWN"); break;
     }
@@ -130,22 +128,20 @@ TAC* code_generator(AST *node)
 
         case AST_SYMBOL: result = tac_create(TAC_SYMBOL, node->symbol, 0, 0); break;
         case AST_SOMA: result = make_bin_op(TAC_ADD,code[0],code[1]); break;
-
         case AST_ATRIBUICAO: result = tac_join(code[0],tac_create(TAC_ASS, node->symbol, code[0]?code[0]->res:0, 0)); break;
-
         case AST_SUB: result = make_bin_op(TAC_SUB,code[0],code[1]); break;
         case AST_MUL: result = make_bin_op(TAC_MUL,code[0],code[1]); break;
         case AST_DIV: result = make_bin_op(TAC_DIV,code[0],code[1]); break;
         case AST_L: result = make_bin_op(TAC_L,code[0],code[1]); break;
         case AST_G: result = make_bin_op(TAC_G,code[0],code[1]); break;
-//        case ASTREE_LE: result = tacJoin(code[0],tacJoin(code[1],tacCreate(TAC_LE, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0))); break;
-//        case ASTREE_GE: result = tacJoin(code[0],tacJoin(code[1],tacCreate(TAC_GE, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0))); break;
-//        case ASTREE_EQ: result = tacJoin(code[0],tacJoin(code[1],tacCreate(TAC_EQ, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0))); break;
-//        case ASTREE_NE: result = tacJoin(code[0],tacJoin(code[1],tacCreate(TAC_NE, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0))); break;
-//        case ASTREE_AND: result = tacJoin(code[0],tacJoin(code[1],tacCreate(TAC_AND, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0))); break;
-//        case ASTREE_OR: result = tacJoin(code[0],tacJoin(code[1],tacCreate(TAC_OR, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0))); break;
+        case AST_LE: result = make_bin_op(TAC_LE,code[0],code[1]); break;
+        case AST_GE: result = make_bin_op(TAC_GE,code[0],code[1]); break;
+        case AST_EQ: result = make_bin_op(TAC_EQ,code[0],code[1]); break;
+        case AST_NE: result = make_bin_op(TAC_NE,code[0],code[1]); break;
+        case AST_AND: result = make_bin_op(TAC_AND,code[0],code[1]); break;
+        case AST_OR: result = make_bin_op(TAC_OR,code[0],code[1]); break;
+
 //        case ASTREE_NOT: result = tacJoin(tacJoin(code[0], code[1]),tacCreate(TAC_NOT, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
-//        case ASTREE_ATR: result = tacJoin(code[0], tacCreate(TAC_MOVE, node->symbol, code[0]?code[0]->res:0, 0)); break;
 //        case ASTREE_READ: result = tacCreate(TAC_READ, node->symbol, 0, 0); break;
 //        case ASTREE_RETURN: result = tacJoin(code[0], tacCreate(TAC_RET, node->symbol, code[0]?code[0]->res:0, 0)); break;
 //        case ASTREE_IF: result = makeIfThenElse(code[0], code[1], 0); break;
