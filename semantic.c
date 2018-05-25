@@ -546,15 +546,12 @@ void check_usage(AST *node){
 			if (node->son[0]->symbol != NULL) {
 				//Se o literal não for inteiro ou char
 				if ((node->son[0]->symbol->type == SYMBOL_LIT_STRING) ||
-					(node->son[0]->symbol->type == SYMBOL_LIT_REAL)) {
+					(node->son[0]->symbol->type == SYMBOL_LIT_REAL) ||
+						(node->son[0]->symbol->datatype == DATATYPE_FLOAT)) {
 					fprintf(stderr, "[LINE %d] Semantic Error: index must be an integer.\n", node->line_number);
 					error++;
 				}
-				//Se o identificador não for inteiro ou char
-				if (node->son[0]->symbol->datatype == DATATYPE_FLOAT) {
-					fprintf(stderr, "[LINE %d] Semantic Error: index must be an integer.\n", node->line_number);
-					error++;
-				}
+
 			}
 
             if (node->son[0]->type != AST_SYMBOL) {
