@@ -45,7 +45,7 @@ void tac_print_single(TAC *tac)
 //        case TAC_RET: fprintf(stderr, "TAC_RET"); break;
         case TAC_IFZ: fprintf(stderr, "TAC_IFZ"); break;
         case TAC_LABEL: fprintf(stderr, "TAC_LABEL"); break;
-//        case TAC_JUMP: fprintf(stderr, "TAC_JUMP"); break;
+        case TAC_JUMP: fprintf(stderr, "TAC_JUMP"); break;
 //        case TAC_PRINT: fprintf(stderr, "TAC_PRINT"); break;
 //        case TAC_PARPOP: fprintf(stderr, "TAC_PARPOP"); break;
 //        case TAC_FUNCALL: fprintf(stderr, "TAC_FUNCALL"); break;
@@ -164,7 +164,7 @@ TAC* code_generator(AST *node)
 //        case ASTREE_RETURN: result = tacJoin(code[0], tacCreate(TAC_RET, node->symbol, code[0]?code[0]->res:0, 0)); break;
         case AST_IF: result = make_if_then(code[0], code[1], 0); break;
 //        case ASTREE_ELSE: result = makeIfThenElse(code[0], code[1], code[2]); break;
-//        case ASTREE_WHILE: result = makeWhile(code[0], code[1]); break;
+        case AST_WHILE: result = make_while(code[0], code[1]); break;
 //        case ASTREE_PRINTL: result = tacJoin(tacCreate(TAC_PRINT, code[0]?code[0]->res:0, 0, 0), code[1]); break;
 //        case ASTREE_FUNCALL: result = tacJoin(code[0], tacCreate(TAC_FUNCALL, makeTemp(), node->symbol, 0)); break;
 //        case ASTREE_PARCALLL: result = tacJoin(code[1], tacCreate(TAC_PARPUSH, code[0]?code[0]->res:0, 0, 0)); break;
@@ -207,4 +207,22 @@ TAC* make_if_then(TAC* code0, TAC* code1, TAC* code2)
 
 
     return tac_join(tac_join(tac_join(code0, new_if_TAC), code1),new_label_TAC);
+}
+
+TAC* make_while(TAC* code0, TAC* code1)
+{
+    TAC* while_TAC;
+    TAC* new_label_TAC;
+    TAC* jump_label_TAC;
+
+    hash_entry *new_label = make_label();
+    hash_entry *new_jump_label = make_label();
+
+    TAC* jump_TAC = tac_create(TAC_JUMP, new_label, 0, 0);
+    while_TAC = tac_create(TAC_IFZ, new_jump_label, code0?code0->res:0, 0);
+
+    new_label_TAC = tac_create(TAC_LABEL, new_label, 0, 0);
+    jump_label_TAC = tac_create(TAC_LABEL, new_jump_label, 0, 0);
+
+    return tac_join(tac_join(tac_join(tac_join(tac_join(new_label_TAC, code0), while_TAC), code1),jump_TAC), jump_label_TAC);
 }
