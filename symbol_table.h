@@ -11,6 +11,8 @@
 #define SYMBOL_FUNCTION 409
 #define SYMBOL_VECTOR 410
 #define SYMBOL_POINTER 411
+#define SYMBOL_LABEL 412
+
 
 #define DATATYPE_INT 501
 #define DATATYPE_CHAR 502
@@ -32,3 +34,4 @@ hash_entry* hash_find(char* text);
 hash_entry* hash_insert(int type, char* text);
 void hash_print(void);
 hash_entry* make_temp();
+hash_entry* make_label();

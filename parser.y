@@ -83,7 +83,7 @@ AST *root;
 
 programa : corpo_programa {root = $$; astPrint($$,0); //semantic_analisys(root);
     fprintf(stderr, "\n----Impressão do código gerado----\n\n");
-	tac_print_back(code_generator($1));
+	tac_print_forward(tac_reverse(code_generator($1)));
     fprintf(stderr, "\n----------------------------------\n");
 }
 

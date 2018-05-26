@@ -27,8 +27,8 @@
 //#define TAC_RET 17
 //#define TAC_PRINT 18
 //#define TAC_FUNCALL 19
-//#define TAC_IFZ 20
-//#define TAC_LABEL 21
+#define TAC_IFZ 20
+#define TAC_LABEL 21
 //#define TAC_JUMP 22
 //#define TAC_BEGINFUN 23
 //#define TAC_ENDFUN 24
@@ -56,8 +56,12 @@ typedef struct tac{
 TAC* tac_create(int type, hash_entry *res, hash_entry *op1, hash_entry *op2);
 void tac_print_single(TAC *tac);
 void tac_print_back(TAC *tac);
+TAC* tac_reverse(TAC* last);
+void tac_print_forward(TAC* tac);
 TAC* tac_join(TAC* l1, TAC* l2);
 TAC* code_generator(AST *node);
+TAC* make_bin_op (int type, TAC* code0, TAC* code1);
+TAC* make_if_then(TAC* code0, TAC* code1, TAC* code2);
 
 
 #endif //ETAPA4_TAC_H

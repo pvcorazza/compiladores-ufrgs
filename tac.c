@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include "tac.h"
 
-TAC* make_bin_op (int type, TAC* code0, TAC* code1) ;
+
 
 TAC* tac_create(int type, hash_entry *res, hash_entry *op1, hash_entry *op2)
 {
@@ -43,8 +43,8 @@ void tac_print_single(TAC *tac)
 //        case TAC_MOVE: fprintf(stderr, "TAC_MOVE"); break;
 //        case TAC_READ: fprintf(stderr, "TAC_READ"); break;
 //        case TAC_RET: fprintf(stderr, "TAC_RET"); break;
-//        case TAC_IFZ: fprintf(stderr, "TAC_IFZ"); break;
-//        case TAC_LABEL: fprintf(stderr, "TAC_LABEL"); break;
+        case TAC_IFZ: fprintf(stderr, "TAC_IFZ"); break;
+        case TAC_LABEL: fprintf(stderr, "TAC_LABEL"); break;
 //        case TAC_JUMP: fprintf(stderr, "TAC_JUMP"); break;
 //        case TAC_PRINT: fprintf(stderr, "TAC_PRINT"); break;
 //        case TAC_PARPOP: fprintf(stderr, "TAC_PARPOP"); break;
@@ -96,6 +96,24 @@ void tac_print_back(TAC *tac)
 //    }
 }
 
+TAC* tac_reverse(TAC* last)
+{
+    TAC* tac = 0;
+    for(tac = last; tac->prev; tac = tac->prev)
+        tac->prev->next = tac;
+    return tac;
+}
+
+void tac_print_forward(TAC* tac)
+{
+    if(!tac) return;
+
+    tac_print_single(tac);
+    tac_print_forward(tac->next);
+
+}
+
+
 TAC* tac_join(TAC* l1, TAC* l2)
 {
     TAC* aux = 0;
@@ -144,7 +162,7 @@ TAC* code_generator(AST *node)
 //        case ASTREE_NOT: result = tacJoin(tacJoin(code[0], code[1]),tacCreate(TAC_NOT, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
 //        case ASTREE_READ: result = tacCreate(TAC_READ, node->symbol, 0, 0); break;
 //        case ASTREE_RETURN: result = tacJoin(code[0], tacCreate(TAC_RET, node->symbol, code[0]?code[0]->res:0, 0)); break;
-//        case ASTREE_IF: result = makeIfThenElse(code[0], code[1], 0); break;
+        case AST_IF: result = make_if_then(code[0], code[1], 0); break;
 //        case ASTREE_ELSE: result = makeIfThenElse(code[0], code[1], code[2]); break;
 //        case ASTREE_WHILE: result = makeWhile(code[0], code[1]); break;
 //        case ASTREE_PRINTL: result = tacJoin(tacCreate(TAC_PRINT, code[0]?code[0]->res:0, 0, 0), code[1]); break;
@@ -173,4 +191,20 @@ TAC* code_generator(AST *node)
 TAC* make_bin_op (int type, TAC* code0, TAC* code1) {
     TAC* new_tac = tac_create(type, make_temp(),code0?code0->res:0,code1?code1->res:0);
     return tac_join(code0, tac_join(code1, new_tac));
+}
+
+TAC* make_if_then(TAC* code0, TAC* code1, TAC* code2)
+{
+    TAC* new_if_TAC = 0;
+    TAC* new_label_TAC = 0;
+    hash_entry* new_label = 0;
+
+
+    new_label = make_label();
+
+    new_if_TAC = tac_create(TAC_IFZ, new_label, code0?code0->res:0, 0);
+    new_label_TAC = tac_create(TAC_LABEL, new_label, 0, 0);
+
+
+    return tac_join(tac_join(tac_join(code0, new_if_TAC), code1),new_label_TAC);
 }
