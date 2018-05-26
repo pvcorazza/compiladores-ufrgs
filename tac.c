@@ -41,7 +41,7 @@ void tac_print_single(TAC *tac)
         case TAC_OR: fprintf(stderr, "TAC_OR"); break;
 //        case TAC_NOT: fprintf(stderr, "TAC_NOT"); break;
 //        case TAC_MOVE: fprintf(stderr, "TAC_MOVE"); break;
-//        case TAC_READ: fprintf(stderr, "TAC_READ"); break;
+        case TAC_READ: fprintf(stderr, "TAC_READ"); break;
 //        case TAC_RET: fprintf(stderr, "TAC_RET"); break;
         case TAC_IFZ: fprintf(stderr, "TAC_IFZ"); break;
         case TAC_LABEL: fprintf(stderr, "TAC_LABEL"); break;
@@ -160,7 +160,7 @@ TAC* code_generator(AST *node)
         case AST_OR: result = make_bin_op(TAC_OR,code[0],code[1]); break;
 
 //        case ASTREE_NOT: result = tacJoin(tacJoin(code[0], code[1]),tacCreate(TAC_NOT, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
-//        case ASTREE_READ: result = tacCreate(TAC_READ, node->symbol, 0, 0); break;
+        case AST_READ: result = tac_create(TAC_READ, node->symbol, 0, 0); break;
 //        case ASTREE_RETURN: result = tacJoin(code[0], tacCreate(TAC_RET, node->symbol, code[0]?code[0]->res:0, 0)); break;
         case AST_IF: result = make_if_then(code[0], code[1], 0); break;
 //        case ASTREE_ELSE: result = makeIfThenElse(code[0], code[1], code[2]); break;

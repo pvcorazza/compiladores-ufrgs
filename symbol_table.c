@@ -83,7 +83,7 @@ hash_entry* make_temp(){
     static int serialNumber = 0;
     static char buffer[64];
 
-    sprintf(buffer, "Temporary_%d", serialNumber++);
+    sprintf(buffer, "_Temporary_%d", serialNumber++);
     return hash_insert(SYMBOL_SCALAR, buffer);
 }
 
@@ -91,6 +91,6 @@ hash_entry* make_label(){
     static int serialNumber = 0;
     static char buffer[64];
 
-    sprintf(buffer, "Label_%d", serialNumber++);
+    sprintf(buffer, "_Label_%d", serialNumber++);
     return hash_insert(SYMBOL_LABEL, buffer);
 }

@@ -23,7 +23,7 @@
 #define TAC_OR 13
 //#define TAC_NOT 14
 //#define TAC_MOVE 15
-//#define TAC_READ 16
+#define TAC_READ 16
 //#define TAC_RET 17
 //#define TAC_PRINT 18
 //#define TAC_FUNCALL 19
