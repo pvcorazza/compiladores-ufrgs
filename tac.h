@@ -21,7 +21,7 @@
 #define TAC_NE 11
 #define TAC_AND 12
 #define TAC_OR 13
-//#define TAC_NOT 14
+#define TAC_NOT 14
 //#define TAC_MOVE 15
 #define TAC_READ 16
 //#define TAC_RET 17
