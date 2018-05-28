@@ -61,7 +61,8 @@ void tac_print_forward(TAC* tac);
 TAC* tac_join(TAC* l1, TAC* l2);
 TAC* code_generator(AST *node);
 TAC* make_bin_op (int type, TAC* code0, TAC* code1);
-TAC* make_if_then(TAC* code0, TAC* code1, TAC* code2);
+TAC* make_if_then(TAC* code0, TAC* code1);
+TAC* make_if_then_else(TAC* code0, TAC* code1, TAC* code2);
 TAC* make_while(TAC* code0, TAC* code1);
 
 #endif //ETAPA5_TAC_H
