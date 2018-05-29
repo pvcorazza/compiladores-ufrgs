@@ -8,7 +8,6 @@
 
 
 //Cria uma TAC no formato TAC(TIPO,RESULTADO,OP1,OP2)
-
 TAC* tac_create(int type, hash_entry *res, hash_entry *op1, hash_entry *op2)
 {
     TAC *new_tac = (TAC*) calloc(1, sizeof(TAC));
@@ -47,13 +46,13 @@ void tac_print_single(TAC *tac)
         case TAC_IFZ: fprintf(stderr, "TAC_IFZ"); break;
         case TAC_LABEL: fprintf(stderr, "TAC_LABEL"); break;
         case TAC_JUMP: fprintf(stderr, "TAC_JUMP"); break;
-//        case TAC_PRINT: fprintf(stderr, "TAC_PRINT"); break;
+        case TAC_PRINT: fprintf(stderr, "TAC_PRINT"); break;
 //        case TAC_PARPOP: fprintf(stderr, "TAC_PARPOP"); break;
 //        case TAC_FUNCALL: fprintf(stderr, "TAC_FUNCALL"); break;
 //        case TAC_BEGINFUN: fprintf(stderr, "TAC_BEGINFUN"); break;
 //        case TAC_ENDFUN: fprintf(stderr, "TAC_ENDFUN"); break;
-//        case TAC_AREAD: fprintf(stderr, "TAC_AREAD"); break;
-//        case TAC_AWRITE: fprintf(stderr, "TAC_AWRITE"); break;
+        case TAC_VECREAD: fprintf(stderr, "TAC_VECREAD"); break;
+        case TAC_VECWRITE: fprintf(stderr, "TAC_VECWRITE"); break;
 //        case TAC_AINIPUSH: fprintf(stderr, "TAC_AINIPUSH"); break;
 //        case TAC_ASIZE: fprintf(stderr, "TAC_ASIZE"); break;
 //        case TAC_PARPUSH: fprintf(stderr, "TAC_PARPUSH"); break;
@@ -166,7 +165,8 @@ TAC* code_generator(AST *node)
         case AST_IF: result = make_if_then(code[0], code[1]); break;
         case AST_IF_ELSE: result = make_if_then_else(code[0], code[1], code[2]); break;
         case AST_WHILE: result = make_while(code[0], code[1]); break;
-//        case ASTREE_PRINTL: result = tacJoin(tacCreate(TAC_PRINT, code[0]?code[0]->res:0, 0, 0), code[1]); break;
+        case AST_LISTA_PRINT: result = tac_join(code[0],tac_join(code[1],tac_create(TAC_PRINT, code[1]?code[1]->res:0, 0, 0))); break;
+
 //        case ASTREE_FUNCALL: result = tacJoin(code[0], tacCreate(TAC_FUNCALL, makeTemp(), node->symbol, 0)); break;
 //        case ASTREE_PARCALLL: result = tacJoin(code[1], tacCreate(TAC_PARPUSH, code[0]?code[0]->res:0, 0, 0)); break;
 //        case ASTREE_FUNDEF: result = makeFunction(tacCreate(TAC_SYMBOL, node->symbol, 0, 0), code[1], code[2]); break;
@@ -175,8 +175,8 @@ TAC* code_generator(AST *node)
 //
 //
 //            //NÃO SEI SE PRECISA
-//        case ASTREE_ARRAY_READ: result = tacCreate(TAC_AREAD, makeTemp(), node->symbol, code[0]?code[0]->res:0); break;
-//        case ASTREE_ARRAY_WRITE: result = tacJoin(code[1], tacCreate(TAC_AWRITE, node->symbol, code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
+        case AST_VET: result = tac_join(code[0],tac_create(TAC_VECREAD, make_temp(), node->symbol, code[0]?code[0]->res:0)); break;
+        case AST_ATRIBUICAO_VETOR: result = tac_join(code[0], tac_join(code[1], tac_create(TAC_VECWRITE, node->symbol, code[0]?code[0]->res:0, code[1]?code[1]->res:0))); break;
 //        case ASTREE_VARINI: result = code[0]; break;
 //        case ASTREE_INTL: result = tacJoin(code[0], tacCreate(TAC_AINIPUSH, node->symbol, 0, 0)); break;
 //        case ASTREE_ARRINI: result = tacJoin(code[0], tacCreate(TAC_ASIZE, node->symbol, 0, 0)); break;

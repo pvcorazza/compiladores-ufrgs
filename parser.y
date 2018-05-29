@@ -154,8 +154,7 @@ comando_read: KW_READ TK_IDENTIFIER { $$ = astCreate(AST_READ, $2, 0, 0, 0, 0); 
 comando_print: KW_PRINT lista_elementos_print { $$ = astCreate(AST_PRINT, 0, $2, 0, 0, 0); }
 	;
 
-lista_elementos_print: LIT_STRING { $$ =  astCreate(AST_SYMBOL, $1, 0, 0, 0, 0); }
- 	| expressao { $$ = $1; }
+lista_elementos_print: {$$ = 0;}
 	| lista_elementos_print expressao { $$ = astCreate(AST_LISTA_PRINT, 0, $1, $2, 0, 0); }
 	| lista_elementos_print LIT_STRING { $$ = astCreate(AST_LISTA_PRINT, 0,$1,astCreate(AST_SYMBOL, $2, 0, 0, 0, 0), 0, 0); }
 	;
