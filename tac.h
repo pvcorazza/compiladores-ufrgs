@@ -30,8 +30,8 @@
 #define TAC_IFZ 20
 #define TAC_LABEL 21
 #define TAC_JUMP 22
-//#define TAC_BEGINFUN 23
-//#define TAC_ENDFUN 24
+#define TAC_BEGINFUN 23
+#define TAC_ENDFUN 24
 #define TAC_VECREAD 25
 #define TAC_VECWRITE 26
 //#define TAC_AINIPUSH 27
@@ -64,5 +64,6 @@ TAC* make_bin_op (int type, TAC* code0, TAC* code1);
 TAC* make_if_then(TAC* code0, TAC* code1);
 TAC* make_if_then_else(TAC* code0, TAC* code1, TAC* code2);
 TAC* make_while(TAC* code0, TAC* code1);
+TAC* make_fun_def(AST* node, TAC* code0, TAC* code1, TAC* code2);
 
 #endif //ETAPA5_TAC_H
