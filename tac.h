@@ -24,7 +24,7 @@
 #define TAC_NOT 14
 //#define TAC_MOVE 15
 #define TAC_READ 16
-//#define TAC_RET 17
+#define TAC_RET 17
 #define TAC_PRINT 18
 #define TAC_CALL 19
 #define TAC_IFZ 20
@@ -38,6 +38,7 @@
 //#define TAC_ASIZE 28
 //#define TAC_PARPOP 29
 //#define TAC_PARPUSH 30
+#define TAC_ARG 60
 
 #define TAC_ASS 50
 

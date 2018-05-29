@@ -45,7 +45,7 @@ void tac_print_single(TAC *tac)
         case TAC_NOT: fprintf(stderr, "TAC_NOT"); break;
 //        case TAC_MOVE: fprintf(stderr, "TAC_MOVE"); break;
         case TAC_READ: fprintf(stderr, "TAC_READ"); break;
-//        case TAC_RET: fprintf(stderr, "TAC_RET"); break;
+        case TAC_RET: fprintf(stderr, "TAC_RET"); break;
         case TAC_IFZ: fprintf(stderr, "TAC_IFZ"); break;
         case TAC_LABEL: fprintf(stderr, "TAC_LABEL"); break;
         case TAC_JUMP: fprintf(stderr, "TAC_JUMP"); break;
@@ -60,6 +60,7 @@ void tac_print_single(TAC *tac)
 //        case TAC_ASIZE: fprintf(stderr, "TAC_ASIZE"); break;
 //        case TAC_PARPUSH: fprintf(stderr, "TAC_PARPUSH"); break;
 
+        case TAC_ARG: fprintf(stderr, "TAC_ARG"); break;
         case TAC_ASS: fprintf(stderr, "TAC_ASS"); break;
 
         default: fprintf(stderr, "TAC_UNKNOWN"); break;
@@ -164,19 +165,16 @@ TAC* code_generator(AST *node)
         case AST_OR: result = make_bin_op(TAC_OR,code[0],code[1]); break;
         case AST_NOT: result = tac_join(code[0],tac_create(TAC_NOT,make_temp(),code[0]?code[0]->res:0,0)); break;
         case AST_READ: result = tac_create(TAC_READ, node->symbol, 0, 0); break;
-//        case ASTREE_RETURN: result = tacJoin(code[0], tacCreate(TAC_RET, node->symbol, code[0]?code[0]->res:0, 0)); break;
+        case AST_RETURN: result = tac_join(code[0], tac_create(TAC_RET, 0, code[0]?code[0]->res:0, 0)); break;
         case AST_IF: result = make_if_then(code[0], code[1]); break;
         case AST_IF_ELSE: result = make_if_then_else(code[0], code[1], code[2]); break;
         case AST_WHILE: result = make_while(code[0], code[1]); break;
         case AST_LISTA_PRINT: result = tac_join(code[0],tac_join(code[1],tac_create(TAC_PRINT, code[1]?code[1]->res:0, 0, 0))); break;
-
         case AST_CHAMADA_FUNCAO: result = tac_join(code[0], tac_create(TAC_CALL, make_temp(), node->symbol, 0)); break;
-//        case ASTREE_PARCALLL: result = tacJoin(code[1], tacCreate(TAC_PARPUSH, code[0]?code[0]->res:0, 0, 0)); break;
+        case AST_ARG_FUNCAO: result = tac_join(code[0], tac_join(tac_create(TAC_ARG, code[0]?code[0]->res:0, 0, 0),code[1])); break;
         case AST_DEF_FUNCAO: result = make_fun_def(node, code[0], code[1], code[2]); break;
-//        case ASTREE_PARAM: result = tacCreate(TAC_PARPOP, node->symbol, 0, 0); break;
+//        case AST_PARAM: result = tac_create(TAC_ARG, node->symbol, 0, 0); break;
 //        case ASTREE_PARL: result = tacJoin(code[0], code[1]); break;
-//
-//
         case AST_VET: result = tac_join(code[0],tac_create(TAC_VECREAD, make_temp(), node->symbol, code[0]?code[0]->res:0)); break;
         case AST_ATRIBUICAO_VETOR: result = tac_join(code[0], tac_join(code[1], tac_create(TAC_VECWRITE, node->symbol, code[0]?code[0]->res:0, code[1]?code[1]->res:0))); break;
 //        case ASTREE_INTL: result = tacJoin(code[0], tacCreate(TAC_AINIPUSH, node->symbol, 0, 0)); break;

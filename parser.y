@@ -193,7 +193,7 @@ literal : LIT_CHAR { $$ = astCreate(AST_SYMBOL, $1, 0, 0, 0, 0); };
 	;
 
 argumentos_funcao: expressao ',' argumentos_funcao { $$ = astCreate(AST_ARG_FUNCAO, 0, $1, $3, 0, 0); };
-    | expressao {$$=$1;}
+    | expressao {$$ = astCreate(AST_ARG_FUNCAO, 0, $1, 0, 0, 0);}
 ;
 
 /* Comandos de controle de fluxo */
