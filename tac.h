@@ -26,7 +26,7 @@
 #define TAC_READ 16
 //#define TAC_RET 17
 #define TAC_PRINT 18
-//#define TAC_FUNCALL 19
+#define TAC_CALL 19
 #define TAC_IFZ 20
 #define TAC_LABEL 21
 #define TAC_JUMP 22

@@ -51,7 +51,7 @@ void tac_print_single(TAC *tac)
         case TAC_JUMP: fprintf(stderr, "TAC_JUMP"); break;
         case TAC_PRINT: fprintf(stderr, "TAC_PRINT"); break;
 //        case TAC_PARPOP: fprintf(stderr, "TAC_PARPOP"); break;
-//        case TAC_FUNCALL: fprintf(stderr, "TAC_FUNCALL"); break;
+        case TAC_CALL: fprintf(stderr, "TAC_CALL"); break;
         case TAC_BEGINFUN: fprintf(stderr, "TAC_BEGINFUN"); break;
         case TAC_ENDFUN: fprintf(stderr, "TAC_ENDFUN"); break;
         case TAC_VECREAD: fprintf(stderr, "TAC_VECREAD"); break;
@@ -170,7 +170,7 @@ TAC* code_generator(AST *node)
         case AST_WHILE: result = make_while(code[0], code[1]); break;
         case AST_LISTA_PRINT: result = tac_join(code[0],tac_join(code[1],tac_create(TAC_PRINT, code[1]?code[1]->res:0, 0, 0))); break;
 
-//        case ASTREE_FUNCALL: result = tacJoin(code[0], tacCreate(TAC_FUNCALL, makeTemp(), node->symbol, 0)); break;
+        case AST_CHAMADA_FUNCAO: result = tac_join(code[0], tac_create(TAC_CALL, make_temp(), node->symbol, 0)); break;
 //        case ASTREE_PARCALLL: result = tacJoin(code[1], tacCreate(TAC_PARPUSH, code[0]?code[0]->res:0, 0, 0)); break;
         case AST_DEF_FUNCAO: result = make_fun_def(node, code[0], code[1], code[2]); break;
 //        case ASTREE_PARAM: result = tacCreate(TAC_PARPOP, node->symbol, 0, 0); break;
