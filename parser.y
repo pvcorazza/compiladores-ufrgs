@@ -5,7 +5,7 @@
 #include "ast.h"
 #include "semantic.h"
 #include "tac.h"
-
+#include "assembler.h"
 
 int yylex();
 void yyerror(const char *s);
@@ -83,7 +83,9 @@ AST *root;
 
 programa : corpo_programa {root = $$; astPrint($$,0); //semantic_analisys(root);
     fprintf(stderr, "\n----Impressão do código gerado----\n\n");
-	tac_print_forward(tac_reverse(code_generator($1)));
+	TAC* tac = tac_reverse(code_generator($1));
+    tac_print_forward(tac);
+    assembler_generate(tac);
     fprintf(stderr, "\n----------------------------------\n");
 }
 
