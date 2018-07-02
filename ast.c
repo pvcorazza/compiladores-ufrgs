@@ -2,8 +2,6 @@
 // Created by pvcorazza on 4/21/18.
 //
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "ast.h"
 extern int getLineNumber();
 

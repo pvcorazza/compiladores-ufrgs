@@ -8,8 +8,8 @@
 # Use make clean to remove old files before remaking everything
 #
 
-etapa5: y.tab.o lex.yy.o main.o symbol_table.o ast.o semantic.o tac.o
-	gcc -o etapa5 y.tab.o lex.yy.o main.o symbol_table.o ast.o semantic.o tac.o
+etapa6: y.tab.o lex.yy.o main.o symbol_table.o ast.o semantic.o tac.o assembler.o
+	gcc -o etapa6 y.tab.o lex.yy.o main.o symbol_table.o ast.o semantic.o tac.o assembler.o
 
 main.o: main.c
 	gcc -c main.c
@@ -21,6 +21,8 @@ ast.o: ast.c
 	gcc -c ast.c
 tac.o: tac.c
 	gcc -c tac.c
+assembler.o: assembler.c
+	gcc -c assembler.c
 lex.yy.o: lex.yy.c
 	gcc -c lex.yy.c
 y.tab.o: y.tab.c
@@ -30,4 +32,4 @@ y.tab.c: parser.y
 lex.yy.c: scanner.l
 	flex --header-file=lex.yy.h scanner.l
 clean:
-	rm *.o lex.yy.c lex.yy.h y.tab.c y.tab.h y.output etapa5
+	rm *.o lex.yy.c lex.yy.h y.tab.c y.tab.h y.output etapa6
