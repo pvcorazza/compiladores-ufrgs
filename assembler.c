@@ -56,9 +56,8 @@ void assembler_generate(TAC *tac){
                     fprintf(file, "\t.cfi_offset 6, -16\n");
                     fprintf(file, "\tmovq\t%%rsp, %%rbp\n");
                     fprintf(file, "\t.cfi_def_cfa_register 6\n");
-                    fprintf(file, "\tmovl\t$0, %%eax\n");
-                    fprintf(file, "\tpopq\t%%rbp\n");
-                    fprintf(file, "\t.cfi_def_cfa 7, 8\n");
+
+
 
                     setup_main = 0;
 
@@ -68,6 +67,9 @@ void assembler_generate(TAC *tac){
             case TAC_ENDFUN:
 
                 if(set_end_main){
+                    fprintf(file, "\tmovl\t$0, %%eax\n");
+                    fprintf(file, "\tpopq\t%%rbp\n");
+                    fprintf(file, "\t.cfi_def_cfa 7, 8\n");
                     fprintf(file, "\tret\n");
                     fprintf(file, "\t.cfi_endproc\n");
                     fprintf(file, ".LFE0:\n");
@@ -133,6 +135,13 @@ void assembler_generate(TAC *tac){
 
                 break;
             case TAC_ASS:
+                //movl	$999, x(%rip)
+                switch (tac->res->datatype){
+
+                    case DATATYPE_INT:
+                        fprintf(file, "\tmovl\t$%s, %s(%%rip)\n", tac->op1->text, tac->res->text);
+                        break;
+                }
 
                 break;
         }
