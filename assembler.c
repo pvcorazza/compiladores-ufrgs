@@ -17,7 +17,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+
 char c;
+aliasing a = { 0xffffffff };
 int setup_main = 1;
 int setup_global_data = 1;
 int set_end_main = 1;
@@ -101,6 +103,19 @@ void assembler_generate(TAC *tac){
                         fprintf(file,"\t.long\t%s\n",tac->op1->text);
                         break;
 
+                    case DATATYPE_FLOAT:
+
+                        a.f = atof(tac->op1->text);
+                        fprintf(file, "\t.globl\t%s\n",
+                                tac->res->text);
+                        fprintf(file,"\t.type\t%s, @object\n",tac->res->text);
+                        fprintf(file,"\t.size\t%s, 4\n",tac->res->text);
+                        fprintf(file,"%s:\n",tac->res->text);
+                        fprintf(file,"\t.long\t%d\n",a.uint32);
+                        break;
+
+
+
                     case DATATYPE_CHAR:
 
                         fprintf(file, "\t.globl\t%s\n",
@@ -110,7 +125,7 @@ void assembler_generate(TAC *tac){
                         fprintf(file,"%s:\n",tac->res->text);
                         fprintf(file,"\t.byte\t%d\n",(int)*tac->res->text); //pega inteiro relativo ao caracter
                          break;
-                         
+
                     }
                 break;
 
