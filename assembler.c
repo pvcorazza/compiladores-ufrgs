@@ -81,12 +81,11 @@ void assembler_generate(TAC *tac){
             //Gera asm para declaracao de variaveis globais
             case TAC_VARDEC:
 
-                printf("TAC_VARDEC\n");
-
                 //setup do inicio da area de declaracao de variaveis globais, somente no inicio
                 if(setup_global_data)
                 {
                     fprintf(file, "\t.data\n");
+                    fprintf(file,"\t.align\t4\n");
                     setup_global_data = 0;
                 }
 
@@ -94,7 +93,7 @@ void assembler_generate(TAC *tac){
 
                     case DATATYPE_INT:
 
-                        fprintf(file, "\t.globl\t%s\n\t.align\t4\n",
+                        fprintf(file, "\t.globl\t%s\n",
                                 tac->res->text);
                         fprintf(file,"\t.type\t%s, @object\n",tac->res->text);
                         fprintf(file,"\t.size\t%s, 4\n",tac->res->text);
@@ -102,14 +101,16 @@ void assembler_generate(TAC *tac){
                         fprintf(file,"\t.long\t%s\n",tac->op1->text);
                         break;
 
-                        /* case DATATYPE_CHAR:
-                             c = *tac->res->text;
-                             printf("c= %c\n",c);
-                             fprintf(file, "\n\t.globl\t_%s\n\t.align\t2\n_%s:\n\t.byte\t%d \n",
-                                     tac->res->text, tac->res->text,(int) c);
-                             break;
-                             */
+                    case DATATYPE_CHAR:
 
+                        fprintf(file, "\t.globl\t%s\n",
+                                tac->res->text);
+                        fprintf(file,"\t.type\t%s, @object\n",tac->res->text);
+                        fprintf(file,"\t.size\t%s, 1\n",tac->res->text);
+                        fprintf(file,"%s:\n",tac->res->text);
+                        fprintf(file,"\t.byte\t%d\n",(int)*tac->res->text); //pega inteiro relativo ao caracter
+                         break;
+                         
                     }
                 break;
 
