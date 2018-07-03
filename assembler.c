@@ -146,6 +146,13 @@ void assembler_generate(TAC *tac){
                         a.f = atof(tac->op1->text);
                         fprintf(file, "\tmovl\t$%d, %s(%%rip)\n",a.uint32,tac->res->text);
                         break;
+
+                    case DATATYPE_CHAR:
+
+                        fprintf(file, "\tmovb\t$%d, %s(%%rip)\n",(int)*tac->op1->text,tac->res->text);
+
+                        break;
+
                 }
 
                 break;
