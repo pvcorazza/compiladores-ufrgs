@@ -135,11 +135,16 @@ void assembler_generate(TAC *tac){
 
                 break;
             case TAC_ASS:
-                //movl	$999, x(%rip)
+
                 switch (tac->res->datatype){
 
                     case DATATYPE_INT:
                         fprintf(file, "\tmovl\t$%s, %s(%%rip)\n", tac->op1->text, tac->res->text);
+                        break;
+
+                    case DATATYPE_FLOAT:
+                        a.f = atof(tac->op1->text);
+                        fprintf(file, "\tmovl\t$%d, %s(%%rip)\n",a.uint32,tac->res->text);
                         break;
                 }
 
