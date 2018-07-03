@@ -62,6 +62,7 @@ void tac_print_single(TAC *tac)
 
         case TAC_ARG: fprintf(stderr, "TAC_ARG"); break;
         case TAC_ASS: fprintf(stderr, "TAC_ASS"); break;
+        case TAC_VARDEC: fprintf(stderr, "TAC_VARDEC"); break;
 
         default: fprintf(stderr, "TAC_UNKNOWN"); break;
     }
@@ -148,7 +149,6 @@ TAC* code_generator(AST *node)
 
     switch(node->type)
     {
-
         case AST_SYMBOL: result = tac_create(TAC_SYMBOL, node->symbol, 0, 0); break;
         case AST_SOMA: result = make_bin_op(TAC_ADD,code[0],code[1]); break;
         case AST_ATRIBUICAO: result = tac_join(code[0],tac_create(TAC_ASS, node->symbol, code[0]?code[0]->res:0, 0)); break;
@@ -178,6 +178,7 @@ TAC* code_generator(AST *node)
         case AST_VET: result = tac_join(code[0],tac_create(TAC_VECREAD, make_temp(), node->symbol, code[0]?code[0]->res:0)); break;
         case AST_ATRIBUICAO_VETOR: result = tac_join(code[0], tac_join(code[1], tac_create(TAC_VECWRITE, node->symbol, code[0]?code[0]->res:0, code[1]?code[1]->res:0))); break;
 //        case ASTREE_INTL: result = tacJoin(code[0], tacCreate(TAC_AINIPUSH, node->symbol, 0, 0)); break;
+        case AST_DECL_GLOBAL: result = tac_join(code[0],tac_create(TAC_VARDEC, node->symbol, code[0]?code[0]->res:0, 0)); break;
 
         default: result = tac_join(tac_join(tac_join(code[0], code[1]), code[2]), code[3]) ; break;
 

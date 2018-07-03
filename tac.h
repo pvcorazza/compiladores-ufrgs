@@ -34,6 +34,7 @@
 #define TAC_ENDFUN 24
 #define TAC_VECREAD 25
 #define TAC_VECWRITE 26
+#define TAC_VARDEC 27
 //#define TAC_AINIPUSH 27
 //#define TAC_ASIZE 28
 //#define TAC_PARPOP 29
