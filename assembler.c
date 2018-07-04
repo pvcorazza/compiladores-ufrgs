@@ -179,6 +179,7 @@ void assembler_generate(TAC *tac){
                     }
                 }
                 break;
+
             case TAC_SUB:
 
                 if(tac->op1->datatype == DATATYPE_INT){
@@ -261,6 +262,57 @@ void assembler_generate(TAC *tac){
                 }
 
                 break;
+
+            case TAC_DIV:
+
+                if(tac->op1->datatype == DATATYPE_INT){
+                    if(tac->op2->datatype == DATATYPE_INT){
+                        //entrou aqui temos uma soma de 2 operandos inteiros
+
+                        //Declara temporário
+                        fprintf(file, "\t.data\n");
+                        fprintf(file, "\t.globl\t%s\n",
+                                tac->res->text);
+                        fprintf(file,"\t.type\t%s, @object\n",tac->res->text);
+                        fprintf(file,"\t.size\t%s, 4\n",tac->res->text);
+                        fprintf(file,"%s:\n",tac->res->text);
+                        fprintf(file,"\t.long\t0\n");
+                        fprintf(file,"\t.text\n\n");
+
+
+                        //Teste para o operando 1
+                        if(tac->op1->type == SYMBOL_LIT_INT){
+                            fprintf(file, "\tmovl	$%s, %%edx\n", tac->op1->text);
+                        }
+                        else{
+                            //verifica operando 1 é uma variavel inteira
+                            if(tac->op1->type == SYMBOL_SCALAR){
+                                fprintf(file, "\tmovl	%s(%%rip), %%edx\n", tac->op1->text);
+                            }
+                        }
+
+                        //Teste do operando 2
+                        if(tac->op2->type == SYMBOL_LIT_INT){
+                            fprintf(file, "\taddl	$%s,%%ecx\n",tac->op2->text);
+                        }
+                        else{
+                            if(tac->op1->type == SYMBOL_SCALAR){
+                                fprintf(file, "\taddl	%s(%%rip), %%ecx\n", tac->op2->text);
+                            }
+                        }
+
+
+                        //Faz alguma coisa pra acontecer a divisao
+                        fprintf(file, "\tcltd\n");
+                        fprintf(file, "\tidivl %%ecx\n");
+
+                        //Move resultado
+                        fprintf(file, "\tmovl	%%ecx, %s(%%rip)\n", tac->res->text);
+
+                    }
+                }
+                break;
+
             case TAC_ASS:
 
                 switch (tac->res->datatype){
@@ -328,6 +380,25 @@ void assembler_generate(TAC *tac){
                         break;
 
                 }
+                break;
+            case TAC_PRINT:
+
+                //printf("PRINT \n");
+                //printf("%d \n",tac->res->type);
+
+                if(tac->res->type == SYMBOL_LIT_STRING){
+
+                    fprintf(file,"\t.section\t.rodata\n");
+                    fprintf(file,".LC0:\n");
+                    fprintf(file,"\t.string\t%s\n",tac->res->text);
+                    fprintf(file,"\t.text\n");
+
+                    fprintf(file,"\tleaq\t.LC0(%%rip), %%rdi\n");
+                    fprintf(file,"\tmovl\t$0, %%eax\n");
+                    fprintf(file,"\tcall\tprintf@PLT\n");
+
+                }
+
                 break;
         }
     }
