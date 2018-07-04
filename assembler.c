@@ -67,7 +67,7 @@ void assembler_generate(TAC *tac){
             case TAC_ENDFUN:
 
                 if(set_end_main){
-                    fprintf(file, "\tmovl\t$0, %%eax\n");
+
                     fprintf(file, "\tpopq\t%%rbp\n");
                     fprintf(file, "\t.cfi_def_cfa 7, 8\n");
                     fprintf(file, "\tret\n");
@@ -182,6 +182,43 @@ void assembler_generate(TAC *tac){
 
                 }
 
+                break;
+
+            case TAC_RET:
+
+                //Testa o tipo de retorno da funcao
+                printf("Tpo do retorno funcao: %d\n",tac->op1->datatype);
+                switch (tac->op1->datatype){
+
+                    case DATATYPE_INT:
+                        printf("Tipo inteiro\n");
+                        printf("Op1 tipo: %d\n",tac->op1->type );
+                        if(tac->op1->type == SYMBOL_LIT_INT){
+                            printf("Retorna um  inteiro literal\n");
+                        }
+                        else{
+                            if(tac->op1->type == SYMBOL_SCALAR){
+                                fprintf(file, "\tmovl	%s(%%rip), %%eax\n", tac->op1->text);
+                            }
+                        }
+                        break;
+                    case DATATYPE_FLOAT:
+                        if(tac->op1->type == SYMBOL_LIT_REAL){
+                            printf("Retorna um float literal\n");
+                        }
+                        else{
+                            if(tac->op1->type == SYMBOL_SCALAR){
+                                printf("Retorna uma varivel do tipo float");
+                            }
+                        }
+                        break;
+                    case DATATYPE_CHAR:
+                        break;
+                    default:
+                        fprintf(file, "\tmovl\t$0, %%eax\n");
+                        break;
+
+                }
                 break;
         }
     }
