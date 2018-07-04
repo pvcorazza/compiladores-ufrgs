@@ -24,6 +24,10 @@ int setup_main = 1;
 int setup_global_data = 1;
 int set_end_main = 1;
 
+int qtd_int=0;//contador de declaracoes inteiras
+int qtd_float=0;
+int qtd_char=0;
+
 void assembler_generate(TAC *tac){
 
     TAC *tac_original = tac;
@@ -139,22 +143,22 @@ void assembler_generate(TAC *tac){
 
                         //Teste para o operando 1
                         if(tac->op1->type == SYMBOL_LIT_INT){
-                            fprintf(file, "\tmovl	$%s, %%eax\n", tac->op1->text);
+                            fprintf(file, "\tmovl	$%s, %%ecx\n", tac->op1->text);
                         }
                         else{
                             //verifica operando 1 é uma variavel inteira
                             if(tac->op1->type == SYMBOL_SCALAR){
-                                fprintf(file, "\tmovl	%s(%%rip), %%eax\n", tac->op1->text);
+                                fprintf(file, "\tmovl	%s(%%rip), %%ecx\n", tac->op1->text);
                             }
                         }
 
                         //Teste do operando 2
                         if(tac->op2->type == SYMBOL_LIT_INT){
-                            fprintf(file, "\taddl	$%s,%%eax\n",tac->op2->text);
+                            fprintf(file, "\taddl	$%s,%%ecx\n",tac->op2->text);
                         }
                         else{
                             if(tac->op1->type == SYMBOL_SCALAR){
-                                fprintf(file, "\taddl	%s(%%rip), %%eax\n", tac->op2->text);
+                                fprintf(file, "\taddl	%s(%%rip), %%ecx\n", tac->op2->text);
                             }
                         }
                     }
@@ -166,7 +170,7 @@ void assembler_generate(TAC *tac){
                 switch (tac->res->datatype){
 
                     case DATATYPE_INT:
-                        fprintf(file, "\tmovl\t%%eax, %s(%%rip)\n", tac->res->text);
+                        fprintf(file, "\tmovl\t%%ecx, %s(%%rip)\n", tac->res->text);
                         break;
 
                     case DATATYPE_FLOAT:
@@ -194,7 +198,7 @@ void assembler_generate(TAC *tac){
                         printf("Tipo inteiro\n");
                         printf("Op1 tipo: %d\n",tac->op1->type );
                         if(tac->op1->type == SYMBOL_LIT_INT){
-                            printf("Retorna um  inteiro literal\n");
+                            fprintf(file, "\tmovl	$%s, %%eax\n", tac->op1->text);
                         }
                         else{
                             if(tac->op1->type == SYMBOL_SCALAR){
@@ -205,7 +209,10 @@ void assembler_generate(TAC *tac){
                     case DATATYPE_FLOAT:
                         if(tac->op1->type == SYMBOL_LIT_REAL){
                             printf("Retorna um float literal\n");
-                        }
+                            a.f = atof(tac->op1->text);
+                            printf("tac->op1->text %s\n",tac->op1->text);
+                            fprintf(file, "\tmovl	$%d, %%eax\n", a.uint32);
+                            }
                         else{
                             if(tac->op1->type == SYMBOL_SCALAR){
                                 printf("Retorna uma varivel do tipo float");
@@ -213,9 +220,18 @@ void assembler_generate(TAC *tac){
                         }
                         break;
                     case DATATYPE_CHAR:
+                        if(tac->op1->type == SYMBOL_LIT_CHAR){
+                            fprintf(file, "\tmovl	$%d, %%eax\n",(int)*tac->op1->text);
+
+                        }
+                        else{
+                            if(tac->op1->type == SYMBOL_SCALAR){
+                                fprintf(file, "\tmovl	%s(%%rip), %%eax\n", tac->op1->text);
+                            }
+                        }
                         break;
                     default:
-                        fprintf(file, "\tmovl\t$0, %%eax\n");
+                        fprintf(file, "\tmovl\t%%ecx, %%eax\n");
                         break;
 
                 }
