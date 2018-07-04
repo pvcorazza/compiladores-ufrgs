@@ -186,7 +186,17 @@ void assembler_generate(TAC *tac){
                     if(tac->op2->datatype == DATATYPE_INT){
                         //entrou aqui temos uma subtraçao de 2 operandos inteiros
 
-                        //Teste para o operando 1
+                        //Declara temporário do tipo inteiro
+                        fprintf(file, "\t.data\n");
+                        fprintf(file, "\t.globl\t%s\n",
+                                tac->res->text);
+                        fprintf(file,"\t.type\t%s, @object\n",tac->res->text);
+                        fprintf(file,"\t.size\t%s, 4\n",tac->res->text);
+                        fprintf(file,"%s:\n",tac->res->text);
+                        fprintf(file,"\t.long\t0\n");
+                        fprintf(file,"\t.text\n\n");
+
+                        //Teste do operando 1
                         if(tac->op1->type == SYMBOL_LIT_INT){
                             fprintf(file, "\tmovl	$%s, %%ecx\n", tac->op1->text);
                         }
