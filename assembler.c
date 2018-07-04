@@ -383,8 +383,8 @@ void assembler_generate(TAC *tac){
                 break;
             case TAC_PRINT:
 
-                //printf("PRINT \n");
-                //printf("%d \n",tac->res->type);
+                printf("PRINT \n");
+                printf("%d \n",tac->res->type);
 
                 if(tac->res->type == SYMBOL_LIT_STRING){
 
@@ -394,10 +394,57 @@ void assembler_generate(TAC *tac){
                     fprintf(file,"\t.text\n");
 
                     fprintf(file,"\tleaq\t.LC0(%%rip), %%rdi\n");
-                    fprintf(file,"\tmovl\t$0, %%eax\n");
-                    fprintf(file,"\tcall\tprintf@PLT\n");
 
                 }
+
+                /*
+
+                if(tac->res->type == SYMBOL_LIT_INT){
+                    printf("%s \n",tac->res->text);
+
+
+                    fprintf(file,"\tmovl\t$%s, %%esi \n",tac->res->text);
+                }
+
+                if(tac->res->type == SYMBOL_SCALAR){
+                    printf("%s \n",tac->res->text);
+                }
+
+
+                //Chamada print sistema
+                fprintf(file,"\tmovl\t$0, %%eax\n");
+                fprintf(file,"\tcall\tprintf@PLT\n");*/
+
+
+                break;
+            case TAC_EQ:
+                
+                //Declara temporário
+                fprintf(file, "\t.data\n");
+                fprintf(file, "\t.globl\t%s\n",
+                        tac->res->text);
+                fprintf(file,"\t.type\t%s, @object\n",tac->res->text);
+                fprintf(file,"\t.size\t%s, 4\n",tac->res->text);
+                fprintf(file,"%s:\n",tac->res->text);
+                fprintf(file,"\t.long\t0\n");
+                fprintf(file,"\t.text\n\n");
+
+
+                if(tac->op1->datatype == DATATYPE_INT){
+                    if(tac->op2->datatype == DATATYPE_INT){
+
+                        fprintf(file, "\tmovl\t$%s, %%ecx\n", tac->op1->text);
+                        fprintf(file, "\tcmpl\t$%s, %%ecx\n", tac->op2->text);
+                    }
+                }
+
+
+                //Move para o temporario
+                fprintf(file, "\tmovl	%%ecx, %s(%%rip)\n", tac->res->text);
+
+                break;
+
+            case TAC_IFZ:
 
                 break;
         }
