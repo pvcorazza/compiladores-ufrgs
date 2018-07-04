@@ -137,9 +137,21 @@ void assembler_generate(TAC *tac){
 
             case TAC_ADD:
 
+
                 if(tac->op1->datatype == DATATYPE_INT){
                     if(tac->op2->datatype == DATATYPE_INT){
                         //entrou aqui temos uma soma de 2 operandos inteiros
+
+                        //Declara temporário
+                        fprintf(file, "\t.data\n");
+                        fprintf(file, "\t.globl\t%s\n",
+                                tac->res->text);
+                        fprintf(file,"\t.type\t%s, @object\n",tac->res->text);
+                        fprintf(file,"\t.size\t%s, 4\n",tac->res->text);
+                        fprintf(file,"%s:\n",tac->res->text);
+                        fprintf(file,"\t.long\t0\n");
+                        fprintf(file,"\t.text\n\n");
+
 
                         //Teste para o operando 1
                         if(tac->op1->type == SYMBOL_LIT_INT){
@@ -161,12 +173,48 @@ void assembler_generate(TAC *tac){
                                 fprintf(file, "\taddl	%s(%%rip), %%ecx\n", tac->op2->text);
                             }
                         }
+
+                        //Move resultado
+                        fprintf(file, "\tmovl	%%ecx, %s(%%rip)\n", tac->res->text);
+
                     }
                 }
+                break;
+            case TAC_SUB:
+
+                if(tac->op1->datatype == DATATYPE_INT){
+                    if(tac->op2->datatype == DATATYPE_INT){
+                        //entrou aqui temos uma subtraçao de 2 operandos inteiros
+
+                        //Teste para o operando 1
+                        if(tac->op1->type == SYMBOL_LIT_INT){
+                            fprintf(file, "\tmovl	$%s, %%ecx\n", tac->op1->text);
+                        }
+                        else{
+                            if(tac->op1->type == SYMBOL_SCALAR){
+                                fprintf(file, "\tmovl	%s(%%rip), %%ecx\n", tac->op1->text);
+                            }
+                        }
+
+                        //Teste do operando 2
+                        if(tac->op2->type == SYMBOL_LIT_INT){
+                            fprintf(file, "\tsubl	$%s,%%ecx\n",tac->op2->text);
+                        }
+                        else{
+                            if(tac->op1->type == SYMBOL_SCALAR){
+                                fprintf(file, "\tsubl	%s(%%rip),%%ecx\n", tac->op2->text);
+                            }
+                        }
+
+                        fprintf(file, "\tmovl	%%ecx, %s(%%rip)\n", tac->res->text);
+                    }
+                }
+
 
                 break;
             case TAC_ASS:
 
+                printf("SUBTRAÇAO\n");
                 switch (tac->res->datatype){
 
                     case DATATYPE_INT:
