@@ -133,13 +133,40 @@ void assembler_generate(TAC *tac){
 
             case TAC_ADD:
 
+                if(tac->op1->datatype == DATATYPE_INT){
+                    if(tac->op2->datatype == DATATYPE_INT){
+                        //entrou aqui temos uma soma de 2 operandos inteiros
+
+                        //Teste para o operando 1
+                        if(tac->op1->type == SYMBOL_LIT_INT){
+                            fprintf(file, "\tmovl	$%s, %%eax\n", tac->op1->text);
+                        }
+                        else{
+                            //verifica operando 1 é uma variavel inteira
+                            if(tac->op1->type == SYMBOL_SCALAR){
+                                fprintf(file, "\tmovl	%s(%%rip), %%eax\n", tac->op1->text);
+                            }
+                        }
+
+                        //Teste do operando 2
+                        if(tac->op2->type == SYMBOL_LIT_INT){
+                            fprintf(file, "\taddl	$%s,%%eax\n",tac->op2->text);
+                        }
+                        else{
+                            if(tac->op1->type == SYMBOL_SCALAR){
+                                fprintf(file, "\taddl	%s(%%rip), %%eax\n", tac->op2->text);
+                            }
+                        }
+                    }
+                }
+
                 break;
             case TAC_ASS:
 
                 switch (tac->res->datatype){
 
                     case DATATYPE_INT:
-                        fprintf(file, "\tmovl\t$%s, %s(%%rip)\n", tac->op1->text, tac->res->text);
+                        fprintf(file, "\tmovl\t%%eax, %s(%%rip)\n", tac->res->text);
                         break;
 
                     case DATATYPE_FLOAT:
