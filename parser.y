@@ -81,7 +81,7 @@ AST *root;
 
 %%
 
-programa : corpo_programa {root = $$; astPrint($$,0); semantic_analisys(root);
+programa : corpo_programa {root = $$; astPrint($$,0); //semantic_analisys(root);
     fprintf(stderr, "\n----Impressão do código gerado----\n\n");
 	TAC* tac = tac_reverse(code_generator($1));
     tac_print_forward(tac);
