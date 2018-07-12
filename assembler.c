@@ -394,6 +394,8 @@ void assembler_generate(TAC *tac){
                     fprintf(file,"\t.text\n");
 
                     fprintf(file,"\tleaq\t.LC0(%%rip), %%rdi\n");
+                    fprintf(file,"\tmovl\t$0, %%eax\n");
+                    fprintf(file,"\tcall\tprintf@PLT\n");
 
                 }
 
