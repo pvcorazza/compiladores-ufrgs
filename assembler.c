@@ -399,14 +399,25 @@ void assembler_generate(TAC *tac){
 
                 }
 
-                /*
+
 
                 if(tac->res->type == SYMBOL_LIT_INT){
-                    printf("%s \n",tac->res->text);
 
+                    fprintf(file,"\t.section\t.rodata\n");
+                    fprintf(file,".LC0:\n");
+                    fprintf(file, "\t.string \"%%d\"\n");
+                    fprintf(file,"\t.text\n");
 
+                    fprintf(file,"\tleaq\t.LC0(%%rip), %%rdi\n");
+                    fprintf(file,"\tmovl\t$0, %%eax\n");
                     fprintf(file,"\tmovl\t$%s, %%esi \n",tac->res->text);
+                    fprintf(file,"\tcall\tprintf@PLT\n");
+
+
+
                 }
+
+                /*
 
                 if(tac->res->type == SYMBOL_SCALAR){
                     printf("%s \n",tac->res->text);

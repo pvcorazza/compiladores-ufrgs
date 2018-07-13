@@ -23,7 +23,7 @@ int main () {
 
 	//Outros testes:
 	
-	print "imprimindo teste gepetao\n";
+	print 5;
 	//r = a+i;
 	return 0;
 
