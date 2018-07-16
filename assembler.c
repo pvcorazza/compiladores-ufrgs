@@ -499,6 +499,36 @@ void assembler_generate(TAC *tac){
             case TAC_JUMP:
                 fprintf(file, "\tjmp\t%s\n",tac->res->text);
                 break;
+
+            case TAC_READ:
+                //printf("Tipo do res: %d\n",tac->res->type);
+                //printf("Datatype do res: %d\n",tac->res->datatype);
+                if(tac->res->type == AST_VET){
+                    printf("AST_VET");
+                }
+
+                if(tac->res->type == SYMBOL_VECTOR){
+                    if(tac->res->datatype == DATATYPE_CHAR){
+                        //Leitura de um array de char
+                        printf("Ler uma sequencia de char - string\n");
+                    }
+                }
+                else{
+                    if(tac->res->type == SYMBOL_SCALAR){
+                        switch (tac->res->datatype){
+                            case DATATYPE_CHAR:
+                                printf("Ler um char\n");
+                                break;
+                            case DATATYPE_FLOAT:
+                                printf("Ler um float\n");
+                                break;
+                            case DATATYPE_INT:
+                                printf("Ler um inteiro\n");
+                                break;
+                        }
+                    }
+                }
+                break;
         }
     }
 
