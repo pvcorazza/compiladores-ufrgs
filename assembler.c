@@ -403,14 +403,25 @@ void assembler_generate(TAC *tac){
                     contador_strings++;
                 }
 
-                /*
+
 
                 if(tac->res->type == SYMBOL_LIT_INT){
-                    printf("%s \n",tac->res->text);
 
+                    fprintf(file,"\t.section\t.rodata\n");
+                    fprintf(file,".LC0:\n");
+                    fprintf(file, "\t.string \"%%d\"\n");
+                    fprintf(file,"\t.text\n");
 
+                    fprintf(file,"\tleaq\t.LC0(%%rip), %%rdi\n");
+                    fprintf(file,"\tmovl\t$0, %%eax\n");
                     fprintf(file,"\tmovl\t$%s, %%esi \n",tac->res->text);
+                    fprintf(file,"\tcall\tprintf@PLT\n");
+
+
+
                 }
+
+                /*
 
                 if(tac->res->type == SYMBOL_SCALAR){
                     printf("%s \n",tac->res->text);
@@ -426,7 +437,7 @@ void assembler_generate(TAC *tac){
             case TAC_EQ:
 
                 tipo_comparacao_if = 0; //COLOCA O TIPO DA COMPARACAO PARA O TESTE NO IF
-                
+
                 //Declara temporário
                 fprintf(file, "\t.data\n");
                 fprintf(file, "\t.globl\t%s\n",
@@ -436,6 +447,7 @@ void assembler_generate(TAC *tac){
                 fprintf(file,"%s:\n",tac->res->text);
                 fprintf(file,"\t.long\t0\n");
                 fprintf(file,"\t.text\n\n");
+
 
                 if(tac->op1->datatype == DATATYPE_INT){
                     if(tac->op2->datatype == DATATYPE_INT){
@@ -487,7 +499,6 @@ void assembler_generate(TAC *tac){
             case TAC_JUMP:
                 fprintf(file, "\tjmp\t%s\n",tac->res->text);
                 break;
-
         }
     }
 
