@@ -18,6 +18,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define COMPARACAO_EQ 0
+
+
+
 char c;
 aliasing a = { 0xffffffff };
 int setup_main = 1;
@@ -27,6 +31,8 @@ int set_end_main = 1;
 int qtd_int=0;//contador de declaracoes inteiras
 int qtd_float=0;
 int qtd_char=0;
+int contador_strings = 0;
+int tipo_comparacao_if =0;
 
 void assembler_generate(TAC *tac){
 
@@ -383,20 +389,18 @@ void assembler_generate(TAC *tac){
                 break;
             case TAC_PRINT:
 
-                printf("PRINT \n");
-                printf("%d \n",tac->res->type);
-
                 if(tac->res->type == SYMBOL_LIT_STRING){
 
                     fprintf(file,"\t.section\t.rodata\n");
-                    fprintf(file,".LC0:\n");
+                    fprintf(file,".LC%d:\n",contador_strings);
                     fprintf(file,"\t.string\t%s\n",tac->res->text);
                     fprintf(file,"\t.text\n");
 
-                    fprintf(file,"\tleaq\t.LC0(%%rip), %%rdi\n");
+                    fprintf(file,"\tleaq\t.LC%d(%%rip), %%rdi\n",contador_strings);
                     fprintf(file,"\tmovl\t$0, %%eax\n");
                     fprintf(file,"\tcall\tprintf@PLT\n");
 
+                    contador_strings++;
                 }
 
                 /*
@@ -420,6 +424,8 @@ void assembler_generate(TAC *tac){
 
                 break;
             case TAC_EQ:
+
+                tipo_comparacao_if = 0; //COLOCA O TIPO DA COMPARACAO PARA O TESTE NO IF
                 
                 //Declara temporário
                 fprintf(file, "\t.data\n");
@@ -431,12 +437,30 @@ void assembler_generate(TAC *tac){
                 fprintf(file,"\t.long\t0\n");
                 fprintf(file,"\t.text\n\n");
 
-
                 if(tac->op1->datatype == DATATYPE_INT){
                     if(tac->op2->datatype == DATATYPE_INT){
 
-                        fprintf(file, "\tmovl\t$%s, %%ecx\n", tac->op1->text);
-                        fprintf(file, "\tcmpl\t$%s, %%ecx\n", tac->op2->text);
+
+
+                        if(tac->op1->type == SYMBOL_SCALAR){
+
+                            fprintf(file, "\tmovl\t%s(%%rip), %%ecx\n", tac->op1->text);
+
+                        }
+                        else{
+                            fprintf(file, "\tmovl\t$%s, %%ecx\n", tac->op1->text);
+
+                        }
+
+                        if(tac->op2->type == SYMBOL_SCALAR){
+
+                            fprintf(file, "\tcmpl\t%s(%%rip), %%ecx\n", tac->op2->text);
+                        }
+                        else{
+                            fprintf(file, "\tcmpl\t$%s, %%ecx\n", tac->op2->text);
+
+                        }
+
                     }
                 }
 
@@ -448,7 +472,22 @@ void assembler_generate(TAC *tac){
 
             case TAC_IFZ:
 
+                switch (tipo_comparacao_if){
+                    case COMPARACAO_EQ:
+                        fprintf(file, "\tjne\t%s\n",tac->res->text);
+                        break;
+                }
+
                 break;
+            case TAC_LABEL:
+
+                fprintf(file, "%s:\n",tac->res->text);
+
+                break;
+            case TAC_JUMP:
+                fprintf(file, "\tjmp\t%s\n",tac->res->text);
+                break;
+
         }
     }
 
